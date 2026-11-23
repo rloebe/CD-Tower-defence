@@ -1,0 +1,1410 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<title>Zpoždění – hratelný prototyp</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#FFB020}a:hover{color:#FFD27A}
+</style>
+</helmet>
+<div style="position: relative; width: 960px; height: 640px; overflow: hidden; background: #88C64C; font-family: 'Exo 2', sans-serif; color: #FFFFFF; user-select: none">
+
+<svg width="960" height="640" viewBox="0 0 960 640" style="position: absolute; left: 0px; top: 0px; display: block; z-index: 1; pointer-events: none" aria-hidden="true">
+<path d="{{G.lg0}}" fill="#8DCB4F" stroke="#8DCB4F" stroke-width="0.6"></path>
+<path d="{{G.lg1}}" fill="#88C64C" stroke="#88C64C" stroke-width="0.6"></path>
+<path d="{{G.lg2}}" fill="#93D054" stroke="#93D054" stroke-width="0.6"></path>
+<path d="{{G.tufts}}" fill="#6FAE3D"></path>
+<path d="{{G.flowersW}}" fill="#FFFFFF"></path>
+<path d="{{G.flowersY}}" fill="#FFD84A"></path>
+<path d="{{G.flowersP}}" fill="#F29BB5"></path>
+<path d="{{G.wheatSoil}}" fill="#A47A4A"></path>
+<path d="{{G.plowA}}" fill="#8A5E3B"></path>
+<path d="{{G.plowB}}" fill="#6E4A2E"></path>
+<path d="{{G.roadEdge}}" fill="#9C744A"></path>
+<path d="{{G.road}}" fill="#C29A66"></path>
+<path d="{{G.ruts}}" fill="#D4AF7C"></path>
+<path d="{{G.ballastEdge}}" fill="#8E826F"></path>
+<path d="{{G.ballast}}" fill="#ADA18C"></path>
+<path d="{{G.sleepers}}" fill="#6B4B2E"></path>
+<path d="{{G.planks}}" fill="#7A5A3C"></path>
+<path d="{{G.plankLines}}" fill="#5E4129"></path>
+<path d="{{G.rails}}" fill="none" stroke="#5F636B" stroke-width="2.5" transform="translate(0 1.5)"></path>
+<path d="{{G.rails}}" fill="none" stroke="#E1E4EA" stroke-width="2.5"></path>
+<path d="{{G.shadowsLow}}" fill="rgba(30,60,20,0.22)"></path>
+<path d="{{G.stoneF}}" fill="#8A8E95"></path>
+<path d="{{G.stoneL}}" fill="#6F737A"></path>
+<path d="{{G.dirtF}}" fill="#A0704A"></path>
+<path d="{{G.dirtL}}" fill="#835B3B"></path>
+<path d="{{G.rimF}}" fill="#79B544"></path>
+<path d="{{G.rimL}}" fill="#679C38"></path>
+<path d="{{G.pg0}}" fill="#8DCB4F" stroke="#8DCB4F" stroke-width="0.6"></path>
+<path d="{{G.pg1}}" fill="#88C64C" stroke="#88C64C" stroke-width="0.6"></path>
+<path d="{{G.pg2}}" fill="#93D054" stroke="#93D054" stroke-width="0.6"></path>
+<path d="{{G.shadowsHigh}}" fill="rgba(30,60,20,0.22)"></path>
+<path d="{{spotsD}}" fill="rgba(255,255,255,0.16)" stroke="rgba(255,255,255,0.6)" stroke-width="1"></path>
+<path d="{{hoverD}}" fill="{{hoverFill}}" stroke="{{hoverStroke}}" stroke-width="2"></path>
+</svg>
+
+<sc-if value="{{showRange}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: {{rangeLeft}}px; top: {{rangeTop}}px; width: {{rangeW}}px; height: {{rangeH}}px; box-sizing: border-box; border-radius: 50%; border: 2px dashed {{rangeColor}}; background: {{rangeFill}}; z-index: 3; pointer-events: none"></div>
+</sc-if>
+
+<sc-for list="{{pulses}}" as="p" hint-placeholder-count="0">
+<div style="position: absolute; left: {{p.left}}px; top: {{p.top}}px; width: {{p.w}}px; height: {{p.h}}px; box-sizing: border-box; border-radius: 50%; border: 3px solid rgba(127,184,255,{{p.alpha}}); z-index: 4; pointer-events: none"></div>
+</sc-for>
+
+<sc-for list="{{vox}}" as="o" hint-placeholder-count="3">
+<svg width="300" height="300" viewBox="-150 -200 300 300" style="position: absolute; left: {{o.left}}px; top: {{o.top}}px; z-index: {{o.z}}; overflow: visible; pointer-events: none" aria-hidden="true">
+<path d="{{o.f0.d}}" fill="{{o.f0.fill}}"></path>
+<path d="{{o.f1.d}}" fill="{{o.f1.fill}}"></path>
+<path d="{{o.f2.d}}" fill="{{o.f2.fill}}"></path>
+<path d="{{o.f3.d}}" fill="{{o.f3.fill}}"></path>
+<path d="{{o.f4.d}}" fill="{{o.f4.fill}}"></path>
+<path d="{{o.f5.d}}" fill="{{o.f5.fill}}"></path>
+<path d="{{o.f6.d}}" fill="{{o.f6.fill}}"></path>
+<path d="{{o.f7.d}}" fill="{{o.f7.fill}}"></path>
+<path d="{{o.f8.d}}" fill="{{o.f8.fill}}"></path>
+<path d="{{o.f9.d}}" fill="{{o.f9.fill}}"></path>
+<path d="{{o.f10.d}}" fill="{{o.f10.fill}}"></path>
+<path d="{{o.f11.d}}" fill="{{o.f11.fill}}"></path>
+<path d="{{o.f12.d}}" fill="{{o.f12.fill}}"></path>
+<path d="{{o.f13.d}}" fill="{{o.f13.fill}}"></path>
+<path d="{{o.f14.d}}" fill="{{o.f14.fill}}"></path>
+<path d="{{o.f15.d}}" fill="{{o.f15.fill}}"></path>
+<path d="{{o.f16.d}}" fill="{{o.f16.fill}}"></path>
+<path d="{{o.f17.d}}" fill="{{o.f17.fill}}"></path>
+<path d="{{o.f18.d}}" fill="{{o.f18.fill}}"></path>
+<path d="{{o.f19.d}}" fill="{{o.f19.fill}}"></path>
+</svg>
+</sc-for>
+
+<sc-for list="{{lights}}" as="l" hint-placeholder-count="0">
+<div style="position: absolute; left: {{l.left}}px; top: {{l.top}}px; width: 6px; height: 6px; background: {{l.color}}; box-shadow: {{l.glow}}; z-index: {{l.z}}; pointer-events: none"></div>
+</sc-for>
+
+<sc-for list="{{sprites}}" as="o" hint-placeholder-count="0">
+<sc-if value="{{o.slowed}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: {{o.ringLeft}}px; top: {{o.ringTop}}px; width: {{o.ringW}}px; height: {{o.ringH}}px; box-sizing: border-box; border-radius: 50%; border: 3px solid #7FB8FF; z-index: {{o.z}}; pointer-events: none"></div>
+</sc-if>
+<div style="position: absolute; left: {{o.left}}px; top: {{o.top}}px; width: {{o.size}}px; height: {{o.size}}px; transform: {{o.flip}}; z-index: {{o.z}}; pointer-events: none">
+<dc-import name="Sprite" kind="{{o.sprite}}" size="{{o.size}}" phase="{{o.phase}}" action="{{o.action}}" autoplay="false" hint-size="48px,48px"></dc-import>
+</div>
+<sc-if value="{{o.showHp}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: {{o.hpLeft}}px; top: {{o.hpTop}}px; width: {{o.hpW}}px; height: 5px; background: #E0342F; z-index: {{o.z}}; pointer-events: none">
+<div style="width: {{o.hpPct}}%; height: 5px; background: #3FB05A"></div>
+</div>
+</sc-if>
+</sc-for>
+
+<sc-if value="{{showGhost}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: {{ghostLeft}}px; top: {{ghostTop}}px; width: 54px; height: 54px; opacity: {{ghostOpacity}}; z-index: {{ghostZ}}; pointer-events: none">
+<dc-import name="Sprite" kind="{{ghostKind}}" size="54" phase="{{ghostPhase}}" action="0" autoplay="false" hint-size="54px,54px"></dc-import>
+</div>
+</sc-if>
+
+<svg width="960" height="640" viewBox="0 0 960 640" style="position: absolute; left: 0px; top: 0px; display: block; z-index: 90000; pointer-events: none" aria-hidden="true">
+<path d="{{G.wires}}" fill="none" stroke="#3A3F47" stroke-width="1.2"></path>
+</svg>
+
+<sc-for list="{{smoke}}" as="sm" hint-placeholder-count="0">
+<div style="position: absolute; left: {{sm.left}}px; top: {{sm.top}}px; width: {{sm.size}}px; height: {{sm.size}}px; background: #E9ECEF; opacity: {{sm.opacity}}; transform: rotate(45deg); z-index: 90500; pointer-events: none"></div>
+</sc-for>
+
+<sc-for list="{{shots}}" as="s" hint-placeholder-count="0">
+<div style="position: absolute; left: {{s.left}}px; top: {{s.top}}px; width: {{s.size}}px; height: {{s.size}}px; background: {{s.color}}; transform: rotate(45deg); box-shadow: 0 0 0 2px rgba(28,36,48,0.35); z-index: 95000; pointer-events: none"></div>
+</sc-for>
+
+<div style="position: absolute; left: 58px; top: 150px; padding: 5px 16px 6px 14px; font-size: 15px; font-weight: 800; background: linear-gradient(160deg, #0A62B3 50%, #00549F 50%); clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%); z-index: 96000; pointer-events: none">Kolín</div>
+<sc-for list="{{popups}}" as="pp" hint-placeholder-count="0">
+<div style="position: absolute; left: {{pp.left}}px; top: {{pp.top}}px; transform: translateX(-50%); opacity: {{pp.opacity}}; display: flex; align-items: center; gap: 4px; font-size: {{pp.fontSize}}px; font-weight: 800; color: {{pp.color}}; text-shadow: 0 2px 0 rgba(28,36,48,0.6); white-space: nowrap; z-index: 96500; pointer-events: none">
+<span>{{pp.text}}</span>
+<sc-if value="{{pp.coin}}" hint-placeholder-val="{{ true }}">
+<svg width="18" height="18" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 1 L24 7 L13 13 L2 7 Z" fill="#FFD84A"></path><path d="M2 7 L13 13 L13 25 L2 19 Z" fill="#E8B800"></path><path d="M13 13 L24 7 L24 19 L13 25 Z" fill="#C99100"></path></svg>
+</sc-if>
+</div>
+</sc-for>
+
+<sc-if value="{{isGame}}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; left: 741px; top: 82px; width: 150px; box-sizing: border-box; padding: 6px 10px 8px; background: rgba(10,24,44,0.9); clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px); display: flex; flex-direction: column; gap: 5px; z-index: 96000; pointer-events: none">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 6px">
+<span style="font-size: 13px; font-weight: 800">Praha hl. n.</span>
+<span style="font-size: 12px; font-weight: 800; color: {{delayTextColor}}">{{delay}}/60 min</span>
+</div>
+<div style="height: 10px; background: #1C2A40; clip-path: polygon(3px 0, 100% 0, calc(100% - 3px) 100%, 0 100%)">
+<div style="height: 10px; width: {{delayPct}}%; background: {{delayColor}}"></div>
+</div>
+<span style="font-size: 10px; font-weight: 600; color: #B9CBE0; letter-spacing: 0.06em">ZPOŽDĚNÍ VLAKŮ</span>
+</div>
+<div style="position: absolute; left: 809px; top: 144px; width: 14px; height: 9px; background: rgba(10,24,44,0.9); clip-path: polygon(0 0, 100% 0, 50% 100%); z-index: 96000; pointer-events: none"></div>
+</sc-if>
+
+<button type="button" aria-label="Herní plocha: klikni na políčko vedle trati a postav vybranou věž" onClick="{{ onBoardClick }}" onMouseMove="{{ onBoardMove }}" onMouseLeave="{{ onBoardLeave }}" style="display: {{gameDisplay}}; position: absolute; left: 0px; top: 56px; width: 960px; height: 584px; padding: 0; border: none; background: transparent; cursor: {{boardCursor}}; z-index: 97000"></button>
+
+<div style="display: {{gameDisplay}}; position: absolute; left: 0px; top: 0px; width: 960px; height: 56px; background: #00549F; z-index: 98000">
+<svg width="960" height="56" viewBox="0 0 960 56" style="position: absolute; left: 0px; top: 0px; display: block" aria-hidden="true">
+<path d="{{hudLight}}" fill="#0A62B3"></path>
+<path d="{{hudDark}}" fill="#004A8C"></path>
+<path d="M0 53 L960 53 L960 56 L0 56 Z" fill="#003A70"></path>
+</svg>
+<div style="position: relative; height: 56px; box-sizing: border-box; padding: 0 10px 0 16px; display: flex; align-items: center; gap: 24px">
+<div style="display: flex; align-items: center; gap: 10px">
+<svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 1 L24 7 L13 13 L2 7 Z" fill="#FFD84A"></path><path d="M2 7 L13 13 L13 25 L2 19 Z" fill="#E8B800"></path><path d="M13 13 L24 7 L24 19 L13 25 Z" fill="#C99100"></path></svg>
+<div style="display: flex; flex-direction: column; line-height: 1.1">
+<span style="font-size: 11px; font-weight: 600; color: #CFE1F5; letter-spacing: 0.06em">ROZPOČET</span>
+<span style="font-size: 20px; font-weight: 800">{{money}} Kč</span>
+</div>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M13 1 L23 7 L23 19 L13 25 L3 19 L3 7 Z" fill="#F2F4F7"></path><path d="M13 1 L23 7 L23 19 L13 13 Z" fill="#D2D5DC"></path><path d="M12 6 L14 6 L14 14 L12 14 Z" fill="#1C2430"></path><path d="M12 12 L19 15 L18 17 L12 14 Z" fill="#1C2430"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 4px; line-height: 1.1">
+<span style="font-size: 11px; font-weight: 600; color: #CFE1F5; letter-spacing: 0.06em">ZPOŽDĚNÍ</span>
+<div style="display: flex; align-items: center; gap: 10px">
+<div style="width: 150px; height: 12px; background: #003A70; clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%)">
+<div style="height: 12px; width: {{delayPct}}%; background: {{delayColor}}"></div>
+</div>
+<span style="font-size: 16px; font-weight: 800">{{delay}} / 60 min</span>
+</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; line-height: 1.1">
+<span style="font-size: 11px; font-weight: 600; color: #CFE1F5; letter-spacing: 0.06em">VLNA</span>
+<span style="font-size: 20px; font-weight: 800">{{waveText}}</span>
+</div>
+<div style="flex-grow: 1"></div>
+<button type="button" onClick="{{ onPause }}" aria-pressed="{{ pausedAria }}" style="height: 40px; min-width: 44px; padding: 0 12px; border: 2px solid rgba(255,255,255,0.45); background: {{pauseBg}}; color: #FFFFFF; font-family: 'Exo 2', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer">{{pauseLabel}}</button>
+<button type="button" onClick="{{ onSpeed }}" aria-pressed="{{ fastAria }}" style="height: 40px; min-width: 44px; padding: 0 12px; border: 2px solid rgba(255,255,255,0.45); background: {{speedBg}}; color: #FFFFFF; font-family: 'Exo 2', sans-serif; font-size: 14px; font-weight: 800; cursor: pointer">2×</button>
+<button type="button" onClick="{{ onNextWave }}" disabled="{{ nextDisabled }}" style="height: 44px; padding: 0 16px 0 14px; border: none; background: {{nextBg}}; color: #1C2430; font-family: 'Exo 2', sans-serif; font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; cursor: pointer; clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)">
+<svg width="12" height="14" viewBox="0 0 14 16" aria-hidden="true"><path d="M1 1 L13 8 L1 15 Z" fill="#1C2430"></path></svg>
+Další vlna
+</button>
+</div>
+</div>
+
+<sc-if value="{{showBanner}}" hint-placeholder-val="{{ true }}">
+<div style="position: absolute; left: 480px; top: 68px; transform: translateX(-50%); padding: 8px 16px; font-size: 14px; font-weight: 600; white-space: nowrap; background: rgba(10,24,44,0.88); clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%); z-index: 99800; pointer-events: none">{{bannerText}}</div>
+</sc-if>
+
+<div style="display: {{gameDisplay}}; position: absolute; left: 16px; top: 528px; width: 352px; box-sizing: border-box; padding: 8px 12px 10px; background: rgba(10,24,44,0.88); clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px); z-index: 98000">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px">
+<span style="font-size: 12px; font-weight: 600; color: #CFE1F5">Vyber věž a klikni vedle trati</span>
+<button type="button" onClick="{{ onToggleSpots }}" aria-pressed="{{ spotsAria }}" style="height: 22px; padding: 0 8px; border: 1px solid {{spotsBorder}}; background: {{spotsBg}}; color: #FFFFFF; font-family: 'Exo 2', sans-serif; font-size: 11px; font-weight: 600; white-space: nowrap; cursor: pointer">{{spotsLabel}}</button>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<sc-for list="{{towers}}" as="t" hint-placeholder-count="3">
+<button type="button" onClick="{{ t.pick }}" aria-pressed="{{ t.pressed }}" style="min-height: 66px; padding: 2px 4px 4px; border: 2px solid {{t.border}}; background: {{t.bg}}; opacity: {{t.opacity}}; color: #FFFFFF; font-family: 'Exo 2', sans-serif; display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer">
+<dc-import name="Sprite" kind="{{t.id}}" size="40" hint-size="40px,40px"></dc-import>
+<span style="font-size: 11px; font-weight: 600; line-height: 1.15; text-align: center">{{t.name}}</span>
+<span style="font-size: 13px; font-weight: 800; color: #FFD27A">{{t.price}} Kč</span>
+</button>
+</sc-for>
+</div>
+</div>
+
+<sc-if value="{{ended}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: 0px; top: 0px; width: 960px; height: 640px; background: {{endShade}}; z-index: 99000"></div>
+<div style="position: absolute; left: 240px; top: 150px; width: 480px; box-sizing: border-box; padding: 30px 40px 34px; background: rgba(10,24,44,0.95); clip-path: polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px); display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center; z-index: 99001">
+<h2 style="margin: 0; font-size: 42px; line-height: 1.05; font-weight: 800; color: {{endColor}}">{{endTitle}}</h2>
+<p style="margin: 0; font-size: 16px; color: #E4EEF8">{{endText}}</p>
+<div style="display: flex; gap: 12px; margin-top: 8px">
+<button type="button" onClick="{{ onRestart }}" style="min-height: 46px; padding: 0 26px; border: none; background: #FFB020; color: #1C2430; font-family: 'Exo 2', sans-serif; font-size: 18px; font-weight: 800; cursor: pointer; clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%)">Hrát znovu</button>
+<button type="button" onClick="{{ onMenu }}" style="min-height: 46px; padding: 0 22px; border: 2px solid rgba(255,255,255,0.5); background: transparent; color: #FFFFFF; font-family: 'Exo 2', sans-serif; font-size: 17px; font-weight: 600; cursor: pointer">Hlavní menu</button>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{isMenu}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: 0px; top: 0px; width: 960px; height: 640px; background: rgba(8,24,48,0.55); z-index: 99500"></div>
+<div style="position: absolute; left: 180px; top: 110px; width: 600px; box-sizing: border-box; padding: 36px 48px 40px; background: rgba(10,24,44,0.92); clip-path: polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px); display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; z-index: 99501">
+<span style="font-size: 13px; font-weight: 600; letter-spacing: 0.22em; color: #CFE1F5">ČESKÉ DRÁHY · TOWER DEFENCE</span>
+<h1 style="margin: 0; font-size: 88px; line-height: 1; font-weight: 800; letter-spacing: 0.02em">{{gameTitle}}</h1>
+<p style="margin: 0; font-size: 18px; color: #E4EEF8">Ubraň trať před problémy, než dojedou do stanice.</p>
+<div style="display: flex; gap: 14px; margin-top: 14px">
+<button type="button" onClick="{{ onPlay }}" style="min-height: 48px; padding: 0 30px 0 24px; border: none; background: #FFB020; color: #1C2430; font-family: 'Exo 2', sans-serif; font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 12px; cursor: pointer; clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%)">
+<svg width="14" height="16" viewBox="0 0 14 16" aria-hidden="true"><path d="M1 1 L13 8 L1 15 Z" fill="#1C2430"></path></svg>
+Hrát
+</button>
+<button type="button" onClick="{{ onQuit }}" style="min-height: 48px; padding: 0 24px; border: 2px solid rgba(255,255,255,0.5); background: transparent; color: #FFFFFF; font-family: 'Exo 2', sans-serif; font-size: 18px; font-weight: 600; cursor: pointer">Ukončit</button>
+</div>
+</div>
+<p style="position: absolute; left: 180px; top: 440px; width: 600px; margin: 0; text-align: center; font-size: 14px; color: #E4EEF8; z-index: 99501">Myš – stavba věží · „Další vlna“ – spustí vlnu · 2× – zrychlení</p>
+</sc-if>
+
+<sc-if value="{{isLoading}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; left: 0px; top: 0px; width: 960px; height: 640px; background: rgba(8,24,48,0.62); z-index: 100000">
+<div style="position: absolute; left: 0px; top: 150px; width: 960px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center">
+<span style="font-size: 13px; font-weight: 600; letter-spacing: 0.22em; color: #CFE1F5">ČESKÉ DRÁHY · TOWER DEFENCE</span>
+<span style="font-size: 112px; line-height: 1; font-weight: 800; letter-spacing: 0.02em; text-shadow: 0 6px 0 rgba(0,0,0,0.25)">{{gameTitle}}</span>
+<span style="font-size: 18px; color: #E4EEF8">Ubraň trať z Kolína do Prahy</span>
+</div>
+<div style="position: absolute; left: 300px; top: 446px; width: 360px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center">
+<svg width="360" height="34" viewBox="0 -24 360 34" style="display: block; overflow: visible" aria-hidden="true">
+<path d="M0 2 L360 2 L360 10 L0 10 Z" fill="#1C2A40"></path>
+<path d="M0 2 L{{barFill}} 2 L{{barFill}} 10 L0 10 Z" fill="#FFB020"></path>
+<path d="M0 0 L360 0 L360 2 L0 2 Z" fill="#E1E4EA"></path>
+<g transform="translate({{barTrainX}} 0) scale(-0.12 0.12) translate(0 -102)">
+<path d="M150 24 L170 8 L190 24" fill="none" stroke="#C9CDD3" stroke-width="3"></path>
+<path d="M162 8 L198 8" fill="none" stroke="#C9CDD3" stroke-width="3"></path>
+<path d="M48 24 L320 24 L330 30 L40 30 Z" fill="#2A6CB5"></path>
+<path d="M40 30 L330 30 L330 62 L40 62 Z" fill="#00549F"></path>
+<path d="M40 62 L330 62 L330 82 L40 82 Z" fill="#004585"></path>
+<path d="M40 30 L8 58 L8 62 L40 62 Z" fill="#1E6FBF"></path>
+<path d="M8 62 L40 62 L40 82 L8 82 Z" fill="#00549F"></path>
+<path d="M8 62 L330 62 L330 68 L8 68 Z" fill="#F2F4F7"></path>
+<path d="M8 70 L22 70 L22 82 L8 82 Z" fill="#FFC72C"></path>
+<path d="M44 34 L70 34 L26 52 Z" fill="#CFEAFF"></path>
+<path d="M70 34 L70 52 L26 52 Z" fill="#8EC5EE"></path>
+<path d="M106 38 L136 38 L106 54 Z M156 38 L186 38 L156 54 Z M206 38 L236 38 L206 54 Z M256 38 L286 38 L256 54 Z" fill="#BFE4FF"></path>
+<path d="M136 38 L136 54 L106 54 Z M186 38 L186 54 L156 54 Z M236 38 L236 54 L206 54 Z M286 38 L286 54 L256 54 Z" fill="#8EC5EE"></path>
+<path d="M330 70 L344 70 L344 74 L330 74 Z" fill="#22262C"></path>
+<path d="M348 26 L632 26 L636 34 L344 34 Z" fill="#D2D5DC"></path>
+<path d="M344 34 L636 34 L636 82 L344 82 Z" fill="#00549F"></path>
+<path d="M344 40 L636 40 L636 58 L344 58 Z" fill="#F2F4F7"></path>
+<path d="M360 43 L380 43 L380 55 L360 55 Z M394 43 L414 43 L414 55 L394 55 Z M428 43 L448 43 L448 55 L428 55 Z M462 43 L482 43 L482 55 L462 55 Z M496 43 L516 43 L516 55 L496 55 Z M530 43 L550 43 L550 55 L530 55 Z M564 43 L584 43 L584 55 L564 55 Z M598 43 L618 43 L618 55 L598 55 Z" fill="#6FA6CC"></path>
+<path d="M30 82 L330 82 L330 86 L30 86 Z M344 82 L636 82 L636 86 L344 86 Z" fill="#22262C"></path>
+<path d="M50 84 L130 84 L126 92 L54 92 Z M230 84 L310 84 L306 92 L234 92 Z M360 84 L440 84 L436 92 L364 92 Z M540 84 L620 84 L616 92 L544 92 Z" fill="#2A2E35"></path>
+<path d="M59 94 L63.5 86 L72.5 86 L77 94 L72.5 102 L63.5 102 Z M64 92 L72 92 L72 96 L64 96 Z" fill="#3A3F47" transform="rotate({{wheelA}} 68 94)"></path>
+<path d="M103 94 L107.5 86 L116.5 86 L121 94 L116.5 102 L107.5 102 Z" fill="#3A3F47" transform="rotate({{wheelA}} 112 94)"></path>
+<path d="M239 94 L243.5 86 L252.5 86 L257 94 L252.5 102 L243.5 102 Z" fill="#3A3F47" transform="rotate({{wheelA}} 248 94)"></path>
+<path d="M283 94 L287.5 86 L296.5 86 L301 94 L296.5 102 L287.5 102 Z" fill="#3A3F47" transform="rotate({{wheelA}} 292 94)"></path>
+<path d="M371 94 L375.5 86 L384.5 86 L389 94 L384.5 102 L375.5 102 Z" fill="#3A3F47" transform="rotate({{wheelA}} 380 94)"></path>
+<path d="M415 94 L419.5 86 L428.5 86 L433 94 L428.5 102 L419.5 102 Z" fill="#3A3F47" transform="rotate({{wheelA}} 424 94)"></path>
+<path d="M551 94 L555.5 86 L564.5 86 L569 94 L564.5 102 L555.5 102 Z" fill="#3A3F47" transform="rotate({{wheelA}} 560 94)"></path>
+<path d="M595 94 L599.5 86 L608.5 86 L613 94 L608.5 102 L599.5 102 Z" fill="#3A3F47" transform="rotate({{wheelA}} 604 94)"></path>
+</g>
+</svg>
+<span style="font-size: 15px; font-weight: 800">{{loadText}}</span>
+<span style="font-size: 13px; color: #DCEBD8">{{tipText}}</span>
+</div>
+<button type="button" onClick="{{ onSkip }}" style="position: absolute; right: 20px; bottom: 18px; min-height: 36px; padding: 0 14px; border: 1px solid rgba(255,255,255,0.45); background: rgba(10,24,44,0.4); color: #FFFFFF; font-family: 'Exo 2', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer">Přeskočit</button>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"gameTitle":{"editor":"text","default":"VÝLUKA"},"startScreen":{"editor":"enum","options":["loading","menu","game"],"default":"loading"},"selected":{"editor":"enum","options":["worker","draisine","dispatcher"],"default":"worker"},"$preview":{"width":960,"height":640}}'>
+class Component extends DCLogic {
+  // =====================================================================
+  // Svět: mřížka políček (x doprava, y k divákovi, z nahoru).
+  // Kamera: shora pod úhlem 55° a lehce pootočená (-12°), jako v Unrailed.
+  // =====================================================================
+  K() {
+    if (this._k) return this._k;
+    const S = 46, OX = 10, OY = 168;
+    const CT = 0.9781, SN = -0.2079, SP = 0.8192, CP = 0.5736;
+    const P = (x, y, z) => [OX + S * (x * CT - y * SN), OY + S * ((x * SN + y * CT) * SP - (z || 0) * CP)];
+    const depth = (x, y) => x * SN + y * CT;
+    const zi = (x, y) => Math.round(10000 + depth(x, y) * 100);
+    const f = (n) => Math.round(n * 10) / 10;
+    const poly = (pts) => 'M' + pts.map((p) => f(p[0]) + ' ' + f(p[1])).join(' L') + ' Z ';
+    const line = (pts) => 'M' + pts.map((p) => f(p[0]) + ' ' + f(p[1])).join(' L') + ' ';
+    const quad = (x0, y0, x1, y1, z) => poly([P(x0, y0, z), P(x1, y0, z), P(x1, y1, z), P(x0, y1, z)]);
+    let seed = 777;
+    const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+    const sh = (hex, k) => {
+      const n = parseInt(hex.slice(1), 16);
+      const r = Math.round(((n >> 16) & 255) * k), g = Math.round(((n >> 8) & 255) * k), b = Math.round((n & 255) * k);
+      return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    };
+    const tri = (hex) => [hex, sh(hex, 0.84), sh(hex, 0.7)];
+
+    // ---- trať ----
+    const PATH = [[-2.5, 3.5], [3.5, 3.5], [3.5, 9.5], [7.5, 9.5], [7.5, 4.5], [11.5, 4.5], [11.5, 10.5], [14.5, 10.5], [14.5, 7.5], [18.2, 7.5]];
+    const SIDING = [[15.0, 9.0], [20.5, 9.0]];
+    // hlavní trať dole – jezdí po ní jen projíždějící vlaky (dekorace)
+    const MAIN_Y = 14.6;
+    const MAINLINE = [[-6, MAIN_Y], [27, MAIN_Y]];
+    const mkSegs = (path) => {
+      const out = [];
+      for (let i = 0; i < path.length - 1; i++) {
+        const a = path[i], b = path[i + 1];
+        const len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+        out.push({ a, b, len, ux: (b[0] - a[0]) / len, uy: (b[1] - a[1]) / len });
+      }
+      return out;
+    };
+    const segs = mkSegs(PATH);
+    const total = segs.reduce((s, sg) => s + sg.len, 0);
+    const at = (dist) => {
+      if (dist <= 0) return PATH[0];
+      for (const sg of segs) {
+        if (dist <= sg.len) { const t = dist / sg.len; return [sg.a[0] + (sg.b[0] - sg.a[0]) * t, sg.a[1] + (sg.b[1] - sg.a[1]) * t]; }
+        dist -= sg.len;
+      }
+      return PATH[PATH.length - 1];
+    };
+    const segAt = (dist) => {
+      for (const sg of segs) { if (dist <= sg.len) return sg; dist -= sg.len; }
+      return segs[segs.length - 1];
+    };
+    const segDist = (px, py, a, b) => {
+      const dx = b[0] - a[0], dy = b[1] - a[1];
+      let t = ((px - a[0]) * dx + (py - a[1]) * dy) / (dx * dx + dy * dy);
+      t = Math.max(0, Math.min(1, t));
+      return Math.hypot(px - (a[0] + t * dx), py - (a[1] + t * dy));
+    };
+    const pathDist = (x, y, path) => {
+      let m = Infinity;
+      for (let i = 0; i < path.length - 1; i++) m = Math.min(m, segDist(x, y, path[i], path[i + 1]));
+      return m;
+    };
+
+    // ---- terén a oblasti ----
+    const plat = (c, r) => (r <= 0 || (r === 1 && (c <= -1 || c >= 13)) ? 1 : 0);
+    const ROAD_X = 9.5, ROAD_Y = 13.5, RW = 0.4;
+    const onRoad = (x, y, m) => (Math.abs(x - ROAD_X) < RW + m && y > 2.4 - m && y < ROAD_Y + RW + m) || Math.abs(y - ROAD_Y) < RW + m;
+    const HOUSES = [
+      [13.2, 11.7, 1.5, 1.15, '#F2EBDD', '#C8553D'],
+      [15.3, 11.6, 1.7, 1.25, '#F4E3B5', '#8E4A32'],
+      [17.6, 11.75, 1.4, 1.1, '#E9EEF2', '#C8553D'],
+    ];
+    const CHIMNEYS = [];
+    const RECTS = [
+      [6.4, 11.0, 12.6, 13.05],
+      [12.5, 2.1, 18.7, 4.4],
+      [14.8, 4.4, 20.6, 9.6],
+      [8.4, 1.1, 10.6, 2.7],
+      [-0.2, 1.4, 2.95, 3.1],
+      [4.2, 1.35, 7.0, 2.55],
+    ];
+    HOUSES.forEach((h) => RECTS.push([h[0] - 0.25, h[1] - 0.25, h[0] + h[2] + 0.25, h[1] + h[3] + 0.25]));
+    const inRect = (x, y, m) => RECTS.some((r) => x > r[0] - m && x < r[2] + m && y > r[1] - m && y < r[3] + m);
+
+    const G = {
+      lg0: '', lg1: '', lg2: '', tufts: '', flowersW: '', flowersY: '', flowersP: '',
+      wheatSoil: '', plowA: '', plowB: '', roadEdge: '', road: '', ruts: '',
+      ballastEdge: '', ballast: '', sleepers: '', planks: '', plankLines: '', rails: '', shadowsLow: '',
+      stoneF: '', stoneL: '', dirtF: '', dirtL: '', rimF: '', rimL: '', pg0: '', pg1: '', pg2: '', shadowsHigh: '', wires: '',
+    };
+
+    // tráva (dole i na skalní plošině)
+    for (let r = -6; r < 20; r++) {
+      for (let c = -6; c < 24; c++) {
+        const v = rnd();
+        const kk = v < 0.4 ? 0 : v < 0.8 ? 1 : 2;
+        if (plat(c, r)) G['pg' + kk] += quad(c, r, c + 1, r + 1, 1);
+        else G['lg' + kk] += quad(c, r, c + 1, r + 1, 0);
+      }
+    }
+    // stěny skalní plošiny: tráva nahoře, hlína, kámen
+    const bands = [[0, 0.35, 'stone'], [0.35, 0.82, 'dirt'], [0.82, 1, 'rim']];
+    for (let r = -6; r < 20; r++) {
+      for (let c = -6; c < 24; c++) {
+        if (!plat(c, r)) continue;
+        if (!plat(c, r + 1)) {
+          const y = r + 1;
+          bands.forEach((bd) => { G[bd[2] + 'F'] += poly([P(c, y, bd[0]), P(c + 1, y, bd[0]), P(c + 1, y, bd[1]), P(c, y, bd[1])]); });
+        }
+        if (!plat(c - 1, r)) {
+          bands.forEach((bd) => { G[bd[2] + 'L'] += poly([P(c, r, bd[0]), P(c, r + 1, bd[0]), P(c, r + 1, bd[1]), P(c, r, bd[1])]); });
+        }
+      }
+    }
+    // trsy trávy a kytky
+    const dot = (p, s) => poly([[p[0], p[1] - s], [p[0] + s, p[1]], [p[0], p[1] + s], [p[0] - s, p[1]]]);
+    for (let i = 0; i < 560; i++) {
+      const x = -3 + rnd() * 25, y = 1 + rnd() * 16;
+      if (plat(Math.floor(x), Math.floor(y)) || pathDist(x, y, PATH) < 0.6 || pathDist(x, y, SIDING) < 0.6 || pathDist(x, y, MAINLINE) < 0.6 || onRoad(x, y, 0.1) || inRect(x, y, 0)) continue;
+      const p = P(x, y, 0);
+      const t = rnd();
+      if (t < 0.62) G.tufts += poly([[p[0] - 4, p[1]], [p[0] - 2, p[1] - 6], [p[0], p[1] - 1], [p[0] + 2, p[1] - 7], [p[0] + 3, p[1] - 1], [p[0] + 5, p[1] - 4], [p[0] + 5, p[1]]]);
+      else if (t < 0.77) G.flowersW += dot(p, 2.2);
+      else if (t < 0.9) G.flowersY += dot(p, 2.2);
+      else G.flowersP += dot(p, 2.2);
+    }
+    // pole
+    G.wheatSoil = quad(6.5, 11.2, 12.5, 13.0, 0);
+    G.plowA = quad(12.6, 2.2, 18.6, 4.3, 0);
+    for (let y = 2.3; y < 4.2; y += 0.3) G.plowB += quad(12.6, y, 18.6, y + 0.12, 0.005);
+    // silnice
+    G.roadEdge = quad(ROAD_X - RW - 0.07, 2.5, ROAD_X + RW + 0.07, ROAD_Y + RW + 0.07, 0) + quad(-6, ROAD_Y - RW - 0.07, 24, ROAD_Y + RW + 0.07, 0);
+    G.road = quad(ROAD_X - RW, 2.56, ROAD_X + RW, ROAD_Y + RW, 0.004) + quad(-6, ROAD_Y - RW, 24, ROAD_Y + RW, 0.004);
+    G.ruts = quad(ROAD_X - 0.22, 2.7, ROAD_X - 0.15, ROAD_Y - 0.3, 0.006) + quad(ROAD_X + 0.15, 2.7, ROAD_X + 0.22, ROAD_Y - 0.3, 0.006) +
+      quad(-6, ROAD_Y - 0.22, 24, ROAD_Y - 0.15, 0.006) + quad(-6, ROAD_Y + 0.15, 24, ROAD_Y + 0.22, 0.006);
+    // kolejiště
+    const trackGround = (path) => {
+      for (const sg of mkSegs(path)) {
+        const x0 = Math.min(sg.a[0], sg.b[0]), x1 = Math.max(sg.a[0], sg.b[0]), y0 = Math.min(sg.a[1], sg.b[1]), y1 = Math.max(sg.a[1], sg.b[1]);
+        G.ballastEdge += quad(x0 - 0.47, y0 - 0.47, x1 + 0.47, y1 + 0.47, 0);
+        G.ballast += quad(x0 - 0.4, y0 - 0.4, x1 + 0.4, y1 + 0.4, 0.01);
+        for (let t = 0.17; t < sg.len; t += 0.34) {
+          const cx = sg.a[0] + sg.ux * t, cy = sg.a[1] + sg.uy * t;
+          if (sg.uy === 0) G.sleepers += quad(cx - 0.06, cy - 0.32, cx + 0.06, cy + 0.32, 0.03);
+          else G.sleepers += quad(cx - 0.32, cy - 0.06, cx + 0.32, cy + 0.06, 0.03);
+        }
+      }
+      const off = (d) => path.map((p, i) => {
+        const prev = path[i - 1] || p, next = path[i + 1] || p;
+        const a = i > 0 ? [-(p[1] - prev[1]), p[0] - prev[0]] : [-(next[1] - p[1]), next[0] - p[0]];
+        const b = i < path.length - 1 ? [-(next[1] - p[1]), next[0] - p[0]] : a;
+        const la = Math.hypot(a[0], a[1]), lb = Math.hypot(b[0], b[1]);
+        const n1 = [a[0] / la, a[1] / la], n2 = [b[0] / lb, b[1] / lb];
+        const mx = n1[0] + n2[0], my = n1[1] + n2[1], ml = Math.hypot(mx, my);
+        const k = d / ((mx / ml) * n1[0] + (my / ml) * n1[1]);
+        return P(p[0] + (mx / ml) * k, p[1] + (my / ml) * k, 0.06);
+      });
+      G.rails += line(off(0.17)) + line(off(-0.17));
+    };
+    trackGround(PATH);
+    trackGround(SIDING);
+    trackGround(MAINLINE);
+    // přejezd: prkna přes koleje
+    G.planks = quad(ROAD_X - RW, 4.1, ROAD_X + RW, 4.9, 0.045);
+    for (let y = 4.28; y < 4.85; y += 0.2) G.plankLines += quad(ROAD_X - RW, y, ROAD_X + RW, y + 0.03, 0.05);
+
+    // ---- 3D objekty ----
+    const EMPTY = { d: 'M0 0', fill: 'none' };
+    const BLANK = { z: 0, left: 0, top: 0 };
+    for (let i = 0; i < 20; i++) BLANK['f' + i] = EMPTY;
+    const Lp = (A) => (x, y, z) => { const p = P(x, y, z); return [p[0] - A[0], p[1] - A[1]]; };
+    // kvádr: viditelné jsou levý bok, přední bok a vršek; col = [vršek, přední, levý]
+    const box = (A, x0, y0, w, d, z0, h, col) => {
+      const L = Lp(A), x1 = x0 + w, y1 = y0 + d, z1 = z0 + h;
+      return [
+        { fill: col[2], d: poly([L(x0, y0, z0), L(x0, y1, z0), L(x0, y1, z1), L(x0, y0, z1)]) },
+        { fill: col[1], d: poly([L(x0, y1, z0), L(x1, y1, z0), L(x1, y1, z1), L(x0, y1, z1)]) },
+        { fill: col[0], d: poly([L(x0, y0, z1), L(x1, y0, z1), L(x1, y1, z1), L(x0, y1, z1)]) },
+      ];
+    };
+    const vox = (A, z, faces) => {
+      const it = Object.assign({}, BLANK, { z, left: f(A[0] - 150), top: f(A[1] - 200) });
+      faces.slice(0, 20).forEach((fc, i) => { it['f' + i] = fc; });
+      return it;
+    };
+    const statics = [];
+    const used = new Set();
+    const mark = (x, y) => used.add(Math.floor(x) + ',' + Math.floor(y));
+
+    // skály na plošině
+    const GREYS = [tri('#BDC1C7'), tri('#B0B5BB'), tri('#A3A8AF')];
+    [[-4, 0, 2], [-3, 1, 1], [-2, 0, 2], [-1, -1, 1], [1, -1, 2], [2, -1, 3], [3, 0, 1], [5, -1, 2], [6, -1, 1], [13, 1, 1], [19, 0, 2], [20, 1, 2], [21, 1, 1]].forEach(([c, r, h]) => {
+      const A = P(c + 0.5, r + 0.5, 1);
+      const b0 = Math.floor(rnd() * 3);
+      const faces = [];
+      for (let z = 0; z < h; z++) faces.push(...box(A, c, r, 1, 1, 1 + z, 1, GREYS[(b0 + z) % 3]));
+      G.shadowsHigh += quad(c + 1, r + 0.1, c + 1 + 0.35 * h, r + 1, 1);
+      statics.push(vox(A, zi(c + 0.5, r + 0.5), faces));
+    });
+
+    // stromy
+    const TRUNK = tri('#8A5A33');
+    const PALS = [[tri('#4FAE57'), tri('#62BF68')], [tri('#93D152'), tri('#A6DD66')], [tri('#3B9353'), tri('#4FA764')]];
+    const tree = (cx, cy, z0) => {
+      const A = P(cx, cy, z0);
+      const pal = PALS[Math.floor(rnd() * 3)];
+      const k = 0.85 + rnd() * 0.45;
+      if (z0) G.shadowsHigh += quad(cx + 0.15, cy - 0.25, cx + 0.8, cy + 0.3, z0);
+      else G.shadowsLow += quad(cx + 0.15, cy - 0.25, cx + 0.8, cy + 0.3, 0);
+      statics.push(vox(A, zi(cx, cy), [
+        ...box(A, cx - 0.08, cy - 0.08, 0.16, 0.16, z0, 0.4 * k, TRUNK),
+        ...box(A, cx - 0.36, cy - 0.36, 0.72, 0.72, z0 + 0.35 * k, 0.55 * k, pal[0]),
+        ...box(A, cx - 0.22, cy - 0.22, 0.44, 0.44, z0 + 0.9 * k, 0.45 * k, pal[1]),
+      ]));
+    };
+    [[-1, 0], [0, 0], [-2, 1], [-3, 0], [1, 0], [2, 0], [4, 0], [4, -1], [7, 0], [8, 0], [9, 0], [10, 0], [11, 0], [12, 0], [14, 1], [15, 1], [16, 1], [17, 1], [18, 1]]
+      .forEach(([c, r]) => tree(c + 0.5 + (rnd() - 0.5) * 0.2, r + 0.5 + (rnd() - 0.5) * 0.2, 1));
+
+    // náhodné stromy, keře a balvany dole (ne u trati, aby zbylo místo na věže)
+    const placed = [];
+    const free = (x, y, r) => {
+      if (plat(Math.floor(x - r), Math.floor(y - r)) || plat(Math.floor(x + r), Math.floor(y - r))) return false;
+      if (pathDist(x, y, PATH) < 1.3 + r || pathDist(x, y, SIDING) < 0.8 + r || pathDist(x, y, MAINLINE) < 0.8 + r || onRoad(x, y, r + 0.1) || inRect(x, y, r)) return false;
+      const p = P(x, y, 0);
+      if (p[0] < 10 || p[0] > 950 || p[1] < 70 || p[1] > 650 || (p[0] < 380 && p[1] > 520)) return false;
+      return placed.every((q) => Math.hypot(x - q[0], y - q[1]) > q[2] + r + 0.15);
+    };
+    const scatter = (count, radius, make) => {
+      let n = 0, tries = 0;
+      while (n < count && tries < 2000) {
+        tries++;
+        const x = -1 + rnd() * 22, y = 1.3 + rnd() * 15;
+        const r = radius();
+        if (!free(x, y, r)) continue;
+        placed.push([x, y, r]);
+        mark(x, y);
+        make(x, y, r);
+        n++;
+      }
+    };
+    scatter(18, () => 0.4, (x, y) => tree(x, y, 0));
+    const BUSH = [tri('#5DA944'), tri('#71BC52')];
+    scatter(16, () => 0.3, (x, y) => {
+      const A = P(x, y, 0);
+      G.shadowsLow += quad(x + 0.2, y - 0.15, x + 0.55, y + 0.2, 0);
+      statics.push(vox(A, zi(x, y), [...box(A, x - 0.25, y - 0.2, 0.5, 0.4, 0, 0.28, BUSH[0]), ...box(A, x - 0.15, y - 0.12, 0.3, 0.24, 0.28, 0.14, BUSH[1])]));
+    });
+    scatter(10, () => 0.25, (x, y) => {
+      const A = P(x, y, 0);
+      const s = 0.25 + rnd() * 0.2, h = 0.15 + rnd() * 0.2;
+      statics.push(vox(A, zi(x, y), [...box(A, x - s / 2, y - s / 2, s, s * 0.8, 0, h, GREYS[Math.floor(rnd() * 3)]), ...box(A, x - s / 4, y - s / 4, s * 0.5, s * 0.4, h, h * 0.5, GREYS[0])]));
+    });
+
+    // domky
+    const house = (x0, y0, w, d, wall, roof) => {
+      const A = P(x0 + w / 2, y0 + d / 2, 0), L = Lp(A);
+      const x1 = x0 + w, y1 = y0 + d, ym = (y0 + y1) / 2, zt = 0.85, zr = 1.4, ov = 0.12;
+      const W = tri(wall);
+      let glassF = '', glassL = '';
+      [0.18, 0.66].forEach((t) => { const wx = x0 + w * t; glassF += poly([L(wx, y1, 0.35), L(wx + 0.22, y1, 0.35), L(wx + 0.22, y1, 0.62), L(wx, y1, 0.62)]); });
+      glassL += poly([L(x0, y0 + d * 0.35, 0.35), L(x0, y0 + d * 0.35 + 0.25, 0.35), L(x0, y0 + d * 0.35 + 0.25, 0.62), L(x0, y0 + d * 0.35, 0.62)]);
+      G.shadowsLow += quad(x1, y0 + 0.15, x1 + 0.5, y1 + 0.1, 0);
+      CHIMNEYS.push([x0 + w * 0.7 + 0.09, y0 + d * 0.2 + 0.09]);
+      statics.push(vox(A, zi(x0 + w / 2, y0 + d / 2), [
+        ...box(A, x0, y0, w, d, 0, zt, W),
+        { fill: '#A7D8F2', d: glassF },
+        { fill: '#86BEDD', d: glassL },
+        { fill: '#6B4A2B', d: poly([L(x0 + w * 0.44, y1, 0), L(x0 + w * 0.6, y1, 0), L(x0 + w * 0.6, y1, 0.55), L(x0 + w * 0.44, y1, 0.55)]) },
+        { fill: W[2], d: poly([L(x0, y0, zt), L(x0, y1, zt), L(x0, ym, zr)]) },
+        { fill: sh(roof, 0.72), d: poly([L(x0 - ov, y0 - ov, zt), L(x1 + ov, y0 - ov, zt), L(x1 + ov, ym, zr), L(x0 - ov, ym, zr)]) },
+        { fill: roof, d: poly([L(x0 - ov, ym, zr), L(x1 + ov, ym, zr), L(x1 + ov, y1 + ov, zt), L(x0 - ov, y1 + ov, zt)]) },
+        ...box(A, x0 + w * 0.7, y0 + d * 0.2, 0.18, 0.18, 1.05, 0.55, tri('#8A4A3A')),
+      ]));
+    };
+    HOUSES.forEach((h) => house(h[0], h[1], h[2], h[3], h[4], h[5]));
+
+    // stodola
+    {
+      const x0 = 8.6, y0 = 1.3, w = 1.8, d = 1.2, x1 = x0 + w, y1 = y0 + d, ym = y0 + d / 2, zt = 0.95, zr = 1.55, ov = 0.1;
+      const A = P(x0 + w / 2, y0 + d / 2, 0), L = Lp(A), W = tri('#A13D2D');
+      const dx0 = 9.15, dx1 = 9.85;
+      G.shadowsLow += quad(x1, y0 + 0.15, x1 + 0.55, y1, 0);
+      statics.push(vox(A, zi(x0 + w / 2, ym), [
+        ...box(A, x0, y0, w, d, 0, zt, W),
+        { fill: '#5E2219', d: poly([L(dx0, y1, 0), L(dx1, y1, 0), L(dx1, y1, 0.75), L(dx0, y1, 0.75)]) },
+        { fill: '#F2EBDD', d: poly([L(dx0, y1, 0), L(dx0 + 0.06, y1, 0), L(dx1, y1, 0.75), L(dx1 - 0.06, y1, 0.75)]) + poly([L(dx1, y1, 0), L(dx1 - 0.06, y1, 0), L(dx0, y1, 0.75), L(dx0 + 0.06, y1, 0.75)]) },
+        { fill: W[2], d: poly([L(x0, y0, zt), L(x0, y1, zt), L(x0, ym, zr)]) },
+        { fill: '#4A4E55', d: poly([L(x0 - ov, y0 - ov, zt), L(x1 + ov, y0 - ov, zt), L(x1 + ov, ym, zr), L(x0 - ov, ym, zr)]) },
+        { fill: '#6A6F77', d: poly([L(x0 - ov, ym, zr), L(x1 + ov, ym, zr), L(x1 + ov, y1 + ov, zt), L(x0 - ov, y1 + ov, zt)]) },
+      ]));
+    }
+    // stohy sena
+    [[7.4, 2.0], [11.2, 1.8]].forEach(([x, y]) => {
+      const A = P(x, y, 0);
+      G.shadowsLow += quad(x + 0.25, y - 0.2, x + 0.7, y + 0.3, 0);
+      statics.push(vox(A, zi(x, y), [...box(A, x - 0.3, y - 0.3, 0.6, 0.6, 0, 0.35, tri('#E3B84F')), ...box(A, x - 0.2, y - 0.2, 0.4, 0.4, 0.35, 0.22, tri('#EDC966'))]));
+      mark(x, y);
+    });
+    // pšenice v řádcích
+    for (let i = 0; i < 6; i++) {
+      const y0 = 11.3 + i * 0.29;
+      const A = P(9.5, y0 + 0.09, 0);
+      statics.push(vox(A, zi(9.5, y0 + 0.09), box(A, 6.55, y0, 5.9, 0.18, 0, 0.26, tri(i % 2 ? '#E8C35A' : '#DDB54C'))));
+    }
+    // plot za polem
+    {
+      const fy = 11.08, A = P(9.5, fy, 0), L = Lp(A), FC = tri('#9A6B42');
+      let pl = '', pf = '', pt = '';
+      for (let x = 6.5; x <= 12.51; x += 1) {
+        pl += poly([L(x, fy - 0.04, 0), L(x, fy + 0.04, 0), L(x, fy + 0.04, 0.45), L(x, fy - 0.04, 0.45)]);
+        pf += poly([L(x, fy + 0.04, 0), L(x + 0.08, fy + 0.04, 0), L(x + 0.08, fy + 0.04, 0.45), L(x, fy + 0.04, 0.45)]);
+        pt += poly([L(x, fy - 0.04, 0.45), L(x + 0.08, fy - 0.04, 0.45), L(x + 0.08, fy + 0.04, 0.45), L(x, fy + 0.04, 0.45)]);
+      }
+      statics.push(vox(A, zi(9.5, fy), [
+        { fill: FC[2], d: pl }, { fill: FC[1], d: pf }, { fill: FC[0], d: pt },
+        ...box(A, 6.5, fy + 0.05, 6.08, 0.03, 0.14, 0.06, FC),
+        ...box(A, 6.5, fy + 0.05, 6.08, 0.03, 0.32, 0.06, FC),
+      ]));
+    }
+
+    // nádraží (žlutá budova jako na českých tratích)
+    {
+      const x0 = 15.0, y0 = 4.6, w = 3.5, d = 1.8, x1 = x0 + w, y1 = y0 + d, ym = (y0 + y1) / 2, zt = 1.45, zr = 2.15, ov = 0.15;
+      const A = P(x0 + w / 2, ym, 0), L = Lp(A), W = tri('#E9C46A');
+      let glassF = '', glassL = '';
+      for (let i = 0; i < 5; i++) {
+        const wx = x0 + 0.28 + i * 0.66;
+        [0.25, 0.85].forEach((z) => { if (i !== 2 || z > 0.5) glassF += poly([L(wx, y1, z), L(wx + 0.3, y1, z), L(wx + 0.3, y1, z + 0.38), L(wx, y1, z + 0.38)]); });
+      }
+      [y0 + 0.35, y0 + 1.1].forEach((yy) => [0.25, 0.85].forEach((z) => { glassL += poly([L(x0, yy, z), L(x0, yy + 0.32, z), L(x0, yy + 0.32, z + 0.38), L(x0, yy, z + 0.38)]); }));
+      const cx = x0 + 1.75, cz = zr + 0.07, cy = ym + 0.25;
+      G.shadowsLow += quad(x1, y0 + 0.2, x1 + 0.8, y1, 0);
+      statics.push(vox(A, zi(x0 + w / 2, ym), [
+        ...box(A, x0, y0, w, d, 0, 0.18, tri('#B78F4A')).slice(0, 2),
+        ...box(A, x0, y0, w, d, 0.18, zt - 0.18, W),
+        { fill: '#A7D8F2', d: glassF },
+        { fill: '#86BEDD', d: glassL },
+        { fill: '#6B4A2B', d: poly([L(x0 + 1.6, y1, 0), L(x0 + 1.95, y1, 0), L(x0 + 1.95, y1, 0.62), L(x0 + 1.775, y1, 0.7), L(x0 + 1.6, y1, 0.62)]) },
+        { fill: '#F7EBC8', d: poly([L(x0, y1, 0.74), L(x1, y1, 0.74), L(x1, y1, 0.8), L(x0, y1, 0.8)]) },
+        { fill: W[2], d: poly([L(x0, y0, zt), L(x0, y1, zt), L(x0, ym, zr)]) },
+        { fill: '#7E352B', d: poly([L(x0 - ov, y0 - ov, zt), L(x1 + ov, y0 - ov, zt), L(x1 + ov, ym, zr), L(x0 - ov, ym, zr)]) },
+        { fill: '#A0463A', d: poly([L(x0 - ov, ym, zr), L(x1 + ov, ym, zr), L(x1 + ov, y1 + ov, zt), L(x0 - ov, y1 + ov, zt)]) },
+        ...box(A, cx - 0.25, ym - 0.25, 0.5, 0.5, zr - 0.3, 0.6, W),
+        ...box(A, cx - 0.31, ym - 0.31, 0.62, 0.62, zr + 0.3, 0.1, tri('#7E352B')),
+        { fill: '#FFFFFF', d: poly([L(cx - 0.13, cy, cz), L(cx - 0.065, cy, cz + 0.12), L(cx + 0.065, cy, cz + 0.12), L(cx + 0.13, cy, cz), L(cx + 0.065, cy, cz - 0.12), L(cx - 0.065, cy, cz - 0.12)]) },
+        { fill: '#1C2430', d: poly([L(cx - 0.01, cy, cz), L(cx + 0.01, cy, cz), L(cx + 0.01, cy, cz + 0.1), L(cx - 0.01, cy, cz + 0.1)]) + poly([L(cx, cy, cz - 0.01), L(cx + 0.08, cy, cz - 0.01), L(cx + 0.08, cy, cz + 0.01), L(cx, cy, cz + 0.01)]) },
+      ]));
+    }
+    // nádraží Kolín (začátek trati)
+    {
+      const x0 = 0.3, y0 = 1.7, w = 2.2, d = 1.05, x1 = x0 + w, y1 = y0 + d, ym = (y0 + y1) / 2, zt = 1.0, zr = 1.5, ov = 0.12;
+      const A = P(x0 + w / 2, ym, 0), L = Lp(A), W = tri('#E9C46A');
+      let glassF = '';
+      [0.25, 0.75, 1.65].forEach((wx) => { glassF += poly([L(x0 + wx, y1, 0.32), L(x0 + wx + 0.28, y1, 0.32), L(x0 + wx + 0.28, y1, 0.66), L(x0 + wx, y1, 0.66)]); });
+      G.shadowsLow += quad(x1, y0 + 0.15, x1 + 0.6, y1, 0);
+      statics.push(vox(A, zi(x0 + w / 2, ym), [
+        ...box(A, x0, y0, w, d, 0, 0.14, tri('#B78F4A')).slice(0, 2),
+        ...box(A, x0, y0, w, d, 0.14, zt - 0.14, W),
+        { fill: '#A7D8F2', d: glassF },
+        { fill: '#86BEDD', d: poly([L(x0, y0 + 0.35, 0.32), L(x0, y0 + 0.65, 0.32), L(x0, y0 + 0.65, 0.66), L(x0, y0 + 0.35, 0.66)]) },
+        { fill: '#6B4A2B', d: poly([L(x0 + 1.25, y1, 0), L(x0 + 1.55, y1, 0), L(x0 + 1.55, y1, 0.62), L(x0 + 1.25, y1, 0.62)]) },
+        { fill: '#F7EBC8', d: poly([L(x0, y1, 0.72), L(x1, y1, 0.72), L(x1, y1, 0.77), L(x0, y1, 0.77)]) },
+        { fill: W[2], d: poly([L(x0, y0, zt), L(x0, y1, zt), L(x0, ym, zr)]) },
+        { fill: '#7E352B', d: poly([L(x0 - ov, y0 - ov, zt), L(x1 + ov, y0 - ov, zt), L(x1 + ov, ym, zr), L(x0 - ov, ym, zr)]) },
+        { fill: '#A0463A', d: poly([L(x0 - ov, ym, zr), L(x1 + ov, ym, zr), L(x1 + ov, y1 + ov, zt), L(x0 - ov, y1 + ov, zt)]) },
+        ...box(A, x0 + 1.6, y0 + 0.25, 0.16, 0.16, 1.15, 0.5, tri('#8A4A3A')),
+      ]));
+      const PA = P(1.4, 2.93, 0), PL = Lp(PA);
+      statics.push(vox(PA, zi(1.4, 2.93), [
+        ...box(PA, 0.1, 2.8, 2.55, 0.25, 0, 0.2, tri('#BFC3C9')),
+        { fill: '#FFD84A', d: poly([PL(0.1, 2.97, 0.201), PL(2.65, 2.97, 0.201), PL(2.65, 3.03, 0.201), PL(0.1, 3.03, 0.201)]) },
+      ]));
+      CHIMNEYS.push([x0 + 1.68, y0 + 0.33]);
+    }
+
+    // nástupiště, lampy, lavička, zarážedla
+    const PLAT = tri('#BFC3C9');
+    [[6.45, 0.6], [7.92, 0.5]].forEach(([py, pd]) => {
+      const A = P(16.8, py + pd / 2, 0), L = Lp(A);
+      const edgeY = py < 7 ? py + pd - 0.1 : py;
+      statics.push(vox(A, zi(16.8, py + pd / 2), [
+        ...box(A, 15.0, py, 3.6, pd, 0, 0.22, PLAT),
+        { fill: '#FFD84A', d: poly([L(15.0, edgeY, 0.221), L(18.6, edgeY, 0.221), L(18.6, edgeY + 0.07, 0.221), L(15.0, edgeY + 0.07, 0.221)]) },
+      ]));
+    });
+    [15.7, 17.7].forEach((lx) => {
+      const ly = 8.25, A = P(lx, ly, 0);
+      statics.push(vox(A, zi(lx, ly), [
+        ...box(A, lx - 0.03, ly - 0.03, 0.06, 0.06, 0.22, 1.05, tri('#3A3F47')),
+        ...box(A, lx - 0.1, ly - 0.1, 0.2, 0.2, 1.27, 0.1, tri('#2A2E35')),
+        ...box(A, lx - 0.07, ly - 0.07, 0.14, 0.14, 1.2, 0.07, tri('#FFE08A')),
+      ]));
+    });
+    {
+      const A = P(16.65, 8.2, 0);
+      statics.push(vox(A, zi(16.65, 8.2), [...box(A, 16.4, 8.12, 0.5, 0.18, 0.22, 0.12, tri('#8A5A33')), ...box(A, 16.4, 8.12, 0.5, 0.04, 0.34, 0.2, tri('#8A5A33'))]));
+    }
+    [[18.25, 7.15, 0.3, 0.7], [14.95, 8.68, 0.25, 0.64]].forEach(([bx, by, bw, bd]) => {
+      const A = P(bx + bw / 2, by + bd / 2, 0), L = Lp(A);
+      statics.push(vox(A, zi(bx + bw / 2, by + bd / 2), [
+        ...box(A, bx, by, bw, bd, 0, 0.45, tri('#C8553D')),
+        { fill: '#F2F4F7', d: poly([L(bx, by + bd, 0.25), L(bx + bw, by + bd, 0.25), L(bx + bw, by + bd, 0.33), L(bx, by + bd, 0.33)]) },
+      ]));
+    });
+    // odstavená souprava ČD na vedlejší koleji
+    {
+      const x0 = 15.35, x1 = 17.25, y0 = 8.72, y1 = 9.28, A = P((x0 + x1) / 2, 9, 0), L = Lp(A);
+      let win = '';
+      for (let wx = x0 + 0.55; wx < x1 - 0.2; wx += 0.35) win += poly([L(wx, y1, 0.6), L(wx + 0.2, y1, 0.6), L(wx + 0.2, y1, 0.82), L(wx, y1, 0.82)]);
+      statics.push(vox(A, zi((x0 + x1) / 2, 9), [
+        ...box(A, x0 + 0.1, y0 + 0.05, x1 - x0 - 0.2, y1 - y0 - 0.1, 0.02, 0.16, tri('#2A2E35')),
+        ...box(A, x0, y0, x1 - x0, y1 - y0, 0.18, 0.82, ['#2A6CB5', '#00549F', '#004585']),
+        { fill: '#F2F4F7', d: poly([L(x0, y1, 0.36), L(x1, y1, 0.36), L(x1, y1, 0.43), L(x0, y1, 0.43)]) },
+        { fill: '#BFE4FF', d: win + poly([L(x0, y0 + 0.08, 0.6), L(x0, y1 - 0.08, 0.6), L(x0, y1 - 0.08, 0.86), L(x0, y0 + 0.08, 0.86)]) },
+        { fill: '#FFC72C', d: poly([L(x0, y0, 0.18), L(x0, y1, 0.18), L(x0, y1, 0.36), L(x0, y0, 0.36)]) },
+        ...box(A, x0 + 0.5, y0 + 0.12, 0.9, 0.32, 1.0, 0.07, tri('#8E939A')),
+      ]));
+    }
+    {
+      const x0 = 17.4, x1 = 20.2, y0 = 8.74, y1 = 9.26, A = P((x0 + x1) / 2, 9, 0), L = Lp(A);
+      let win = '';
+      for (let wx = x0 + 0.2; wx < x1 - 0.2; wx += 0.34) win += poly([L(wx, y1, 0.6), L(wx + 0.22, y1, 0.6), L(wx + 0.22, y1, 0.82), L(wx, y1, 0.82)]);
+      statics.push(vox(A, zi((x0 + x1) / 2, 9), [
+        ...box(A, x0 + 0.1, y0 + 0.05, x1 - x0 - 0.2, y1 - y0 - 0.1, 0.02, 0.16, tri('#2A2E35')),
+        ...box(A, x0, y0, x1 - x0, y1 - y0, 0.18, 0.78, ['#D2D5DC', '#00549F', '#004585']),
+        { fill: '#F2F4F7', d: poly([L(x0, y1, 0.55), L(x1, y1, 0.55), L(x1, y1, 0.92), L(x0, y1, 0.92)]) + poly([L(x0, y0, 0.55), L(x0, y1, 0.55), L(x0, y1, 0.92), L(x0, y0, 0.92)]) },
+        { fill: '#6FA6CC', d: win },
+        { fill: '#2A2E35', d: poly([L(x0, y0 + 0.14, 0.2), L(x0, y1 - 0.14, 0.2), L(x0, y1 - 0.14, 0.8), L(x0, y0 + 0.14, 0.8)]) },
+      ]));
+    }
+
+    // stožáry trakčního vedení + dráty
+    for (let d = 3.0; d < total - 0.6; d += 3.4) {
+      const p = at(d), sg = segAt(d);
+      const nx = sg.uy, ny = -sg.ux;
+      const qx = p[0] + nx * 0.58, qy = p[1] + ny * 0.58;
+      if (Math.hypot(p[0] - ROAD_X, p[1] - 4.5) < 1.3 || inRect(qx, qy, 0) || plat(Math.floor(qx), Math.floor(qy)) || qx < -1.5) continue;
+      const A = P(qx, qy, 0);
+      const ax0 = Math.min(qx, p[0]) - 0.03, ay0 = Math.min(qy, p[1]) - 0.03;
+      mark(qx, qy);
+      statics.push(vox(A, zi(qx, qy), [
+        ...box(A, qx - 0.05, qy - 0.05, 0.1, 0.1, 0, 1.8, tri('#8E939A')),
+        ...box(A, ax0, ay0, Math.abs(qx - p[0]) + 0.06, Math.abs(qy - p[1]) + 0.06, 1.66, 0.06, tri('#6F747B')),
+      ]));
+    }
+    G.wires = line(PATH.map((p) => P(p[0], p[1], 1.62))) + line(PATH.map((p) => P(p[0], p[1], 1.78)));
+
+    // návěstidla
+    [[2.85, 2.85], [13.9, 8.3]].forEach(([sx, sy]) => {
+      const A = P(sx, sy, 0), L = Lp(A);
+      mark(sx, sy);
+      statics.push(vox(A, zi(sx, sy), [
+        ...box(A, sx - 0.04, sy - 0.04, 0.08, 0.08, 0, 1.3, tri('#9AA0A8')),
+        ...box(A, sx - 0.12, sy - 0.06, 0.24, 0.12, 1.3, 0.46, tri('#2A2E35')),
+        { fill: '#3FB05A', d: poly([L(sx - 0.05, sy + 0.06, 1.62), L(sx + 0.05, sy + 0.06, 1.62), L(sx + 0.05, sy + 0.06, 1.7), L(sx - 0.05, sy + 0.06, 1.7)]) },
+        { fill: '#4A1A1A', d: poly([L(sx - 0.05, sy + 0.06, 1.44), L(sx + 0.05, sy + 0.06, 1.44), L(sx + 0.05, sy + 0.06, 1.52), L(sx - 0.05, sy + 0.06, 1.52)]) },
+      ]));
+    });
+
+    // železniční přejezd: sloupky se závorou a výstražným křížem (2 stavy: nahoře / dole)
+    const crossSide = (px, py, dir, down) => {
+      const A = P(px, py, 0), L = Lp(A), yf = py + 0.06;
+      const faces = [...box(A, px - 0.05, py - 0.05, 0.1, 0.1, 0, 1.15, tri('#E9ECEF'))];
+      faces.push({ fill: '#FFFFFF', d: poly([L(px - 0.24, yf, 0.98), L(px - 0.18, yf, 0.94), L(px + 0.24, yf, 1.3), L(px + 0.18, yf, 1.34)]) + poly([L(px - 0.24, yf, 1.3), L(px - 0.18, yf, 1.34), L(px + 0.24, yf, 0.98), L(px + 0.18, yf, 0.94)]) });
+      faces.push({ fill: '#1C2430', d: poly([L(px - 0.17, yf, 0.71), L(px + 0.17, yf, 0.71), L(px + 0.17, yf, 0.85), L(px - 0.17, yf, 0.85)]) });
+      let rf = '', rt = '', wf = '', wt = '';
+      for (let i = 0; i < 6; i++) {
+        let fr, tp;
+        if (down) {
+          const xa = px + dir * (0.08 + (i * 1.1) / 6), xb = px + dir * (0.08 + ((i + 1) * 1.1) / 6);
+          const a = Math.min(xa, xb), b = Math.max(xa, xb);
+          fr = poly([L(a, py + 0.03, 0.62), L(b, py + 0.03, 0.62), L(b, py + 0.03, 0.69), L(a, py + 0.03, 0.69)]);
+          tp = poly([L(a, py - 0.03, 0.69), L(b, py - 0.03, 0.69), L(b, py + 0.03, 0.69), L(a, py + 0.03, 0.69)]);
+        } else {
+          const bx = px + dir * 0.08, za = 0.62 + (i * 1.1) / 6, zb = 0.62 + ((i + 1) * 1.1) / 6;
+          fr = poly([L(bx - 0.035, py + 0.03, za), L(bx + 0.035, py + 0.03, za), L(bx + 0.035, py + 0.03, zb), L(bx - 0.035, py + 0.03, zb)]);
+          tp = poly([L(bx - 0.035, py - 0.03, za), L(bx - 0.035, py + 0.03, za), L(bx - 0.035, py + 0.03, zb), L(bx - 0.035, py - 0.03, zb)]);
+        }
+        if (i % 2 === 0) { rf += fr; rt += tp; } else { wf += fr; wt += tp; }
+      }
+      faces.push({ fill: '#B8241F', d: rt }, { fill: '#D6332F', d: rf }, { fill: '#C9CDD3', d: wt }, { fill: '#F2F4F7', d: wf });
+      return vox(A, zi(px, py), faces);
+    };
+    const CROSS = { up: [crossSide(8.9, 3.95, 1, false), crossSide(10.1, 5.05, -1, false)], down: [crossSide(8.9, 3.95, 1, true), crossSide(10.1, 5.05, -1, true)] };
+    const crossLights = [];
+    [[8.9, 3.95], [10.1, 5.05]].forEach(([px, py], si) => {
+      [-0.09, 0.09].forEach((ox, li) => {
+        const p = P(px + ox, py + 0.07, 0.78);
+        crossLights.push({ left: f(p[0] - 3), top: f(p[1] - 3), z: zi(px, py) + 1, phase: li });
+      });
+      mark(px, py);
+    });
+
+    // ---- okolní život: vlaky na hlavní trati, auta, traktor (staví se jednou, při kreslení se jen posouvají) ----
+    const CAR_L = 2.2, CAR_GAP = 0.12;
+    const mover = (len, y, build) => {
+      const A = P(len / 2, y, 0);
+      return { base: vox(A, 0, build(A)), len, y };
+    };
+    const railCar = (loco) => (A) => {
+      const L = Lp(A), y0 = MAIN_Y - 0.28, y1 = MAIN_Y + 0.28;
+      let win = '';
+      if (loco) {
+        for (let wx = 0.55; wx < CAR_L - 0.2; wx += 0.35) win += poly([L(wx, y1, 0.6), L(wx + 0.2, y1, 0.6), L(wx + 0.2, y1, 0.82), L(wx, y1, 0.82)]);
+        return [
+          ...box(A, 0.1, y0 + 0.05, CAR_L - 0.2, 0.46, 0.02, 0.16, tri('#2A2E35')),
+          ...box(A, 0, y0, CAR_L, 0.56, 0.18, 0.82, ['#2A6CB5', '#00549F', '#004585']),
+          { fill: '#F2F4F7', d: poly([L(0, y1, 0.36), L(CAR_L, y1, 0.36), L(CAR_L, y1, 0.43), L(0, y1, 0.43)]) },
+          { fill: '#BFE4FF', d: win + poly([L(0, y0 + 0.08, 0.6), L(0, y1 - 0.08, 0.6), L(0, y1 - 0.08, 0.86), L(0, y0 + 0.08, 0.86)]) },
+          { fill: '#FFC72C', d: poly([L(0, y0, 0.18), L(0, y1, 0.18), L(0, y1, 0.36), L(0, y0, 0.36)]) },
+          ...box(A, 0.5, y0 + 0.12, 0.9, 0.32, 1.0, 0.07, tri('#8E939A')),
+        ];
+      }
+      for (let wx = 0.2; wx < CAR_L - 0.2; wx += 0.34) win += poly([L(wx, y1, 0.6), L(wx + 0.22, y1, 0.6), L(wx + 0.22, y1, 0.82), L(wx, y1, 0.82)]);
+      return [
+        ...box(A, 0.1, y0 + 0.05, CAR_L - 0.2, 0.46, 0.02, 0.16, tri('#2A2E35')),
+        ...box(A, 0, y0 + 0.02, CAR_L, 0.52, 0.18, 0.78, ['#D2D5DC', '#00549F', '#004585']),
+        { fill: '#F2F4F7', d: poly([L(0, y1 - 0.02, 0.55), L(CAR_L, y1 - 0.02, 0.55), L(CAR_L, y1 - 0.02, 0.92), L(0, y1 - 0.02, 0.92)]) },
+        { fill: '#6FA6CC', d: win },
+      ];
+    };
+    const LOCO = mover(CAR_L, MAIN_Y, railCar(true));
+    const COACH = mover(CAR_L, MAIN_Y, railCar(false));
+    const LANES = [13.3, 13.7];
+    const CAR_COLORS = ['#D6332F', '#F2F4F7', '#2E7DD1', '#FFB020'];
+    const CAR_V = LANES.map((ly) => CAR_COLORS.map((col) => mover(0.8, ly, (A) => {
+      const L = Lp(A), y0 = ly - 0.17, y1 = ly + 0.17;
+      return [
+        ...box(A, 0.1, y0 + 0.02, 0.12, 0.3, 0, 0.12, tri('#22262C')),
+        ...box(A, 0.58, y0 + 0.02, 0.12, 0.3, 0, 0.12, tri('#22262C')),
+        ...box(A, 0, y0, 0.8, 0.34, 0.08, 0.2, tri(col)),
+        ...box(A, 0.18, y0 + 0.03, 0.42, 0.28, 0.28, 0.17, tri(col)),
+        { fill: '#BFE4FF', d: poly([L(0.22, y1 - 0.03, 0.3), L(0.56, y1 - 0.03, 0.3), L(0.56, y1 - 0.03, 0.42), L(0.22, y1 - 0.03, 0.42)]) },
+      ];
+    })));
+    const TRACTOR_Y = 3.25;
+    const TRACTOR = [false, true].map((flip) => mover(0.95, TRACTOR_Y, (A) => {
+      const L = Lp(A), y0 = TRACTOR_Y - 0.2, y1 = TRACTOR_Y + 0.2;
+      const cabX = flip ? 0.5 : 0.05, hoodX = flip ? 0.05 : 0.45;
+      return [
+        ...box(A, flip ? 0.6 : 0.08, y0 - 0.02, 0.28, 0.44, 0, 0.3, tri('#22262C')),
+        ...box(A, flip ? 0.08 : 0.68, y0 + 0.02, 0.18, 0.36, 0, 0.18, tri('#22262C')),
+        ...box(A, hoodX, y0 + 0.04, 0.5, 0.32, 0.12, 0.2, tri('#3E9E3A')),
+        ...box(A, cabX, y0, 0.38, 0.4, 0.12, 0.45, tri('#3E9E3A')),
+        { fill: '#BFE4FF', d: poly([L(cabX + 0.06, y1, 0.36), L(cabX + 0.32, y1, 0.36), L(cabX + 0.32, y1, 0.52), L(cabX + 0.06, y1, 0.52)]) },
+        ...box(A, flip ? 0.12 : 0.78, TRACTOR_Y - 0.03, 0.05, 0.05, 0.32, 0.25, tri('#3A3F47')),
+      ];
+    }));
+    // posun hotového objektu po ose x (projekce je lineární, takže stačí posunout obrázek)
+    const mv = (item, x) => Object.assign({}, item.base, {
+      left: f(item.base.left + S * CT * x),
+      top: f(item.base.top + S * SN * SP * x),
+      z: zi(x + item.len / 2, item.y),
+    });
+    const AMB = { LOCO, COACH, CAR_V, TRACTOR, TRACTOR_Y, CHIMNEYS, CAR_L, CAR_GAP, mv };
+
+    // ---- kde se dá stavět ----
+    const buildable = new Set();
+    for (let r = 1; r < 17; r++) {
+      for (let c = -1; c < 21; c++) {
+        const cx = c + 0.5, cy = r + 0.5, key = c + ',' + r, p = P(cx, cy, 0);
+        if (plat(c, r) || used.has(key)) continue;
+        if (pathDist(cx, cy, PATH) < 0.9 || pathDist(cx, cy, SIDING) < 0.9 || pathDist(cx, cy, MAINLINE) < 0.9 || onRoad(cx, cy, 0.3) || inRect(cx, cy, 0.2)) continue;
+        if (p[0] < 24 || p[0] > 936 || p[1] < 90 || p[1] > 622 || (p[0] < 384 && p[1] > 516)) continue;
+        buildable.add(key);
+      }
+    }
+
+    const ENEMIES = {
+      cow: { speed: 1.4, hp: 30, delay: 5, reward: 10, size: 44 },
+      signal: { speed: 2.4, hp: 15, delay: 3, reward: 8, size: 40 },
+      tree: { speed: 0.9, hp: 80, delay: 8, reward: 20, size: 48 },
+      closure: { speed: 0.6, hp: 600, delay: 30, reward: 100, size: 62 },
+    };
+    const TOWERS = {
+      worker: { name: 'Traťový dělník', price: 50, range: 2.3, damage: 10, rate: 1.0, color: '#E9ECEF', shot: 8 },
+      draisine: { name: 'Pracovní drezína', price: 120, range: 3.1, damage: 25, rate: 1.2, color: '#FFB020', shot: 11 },
+      dispatcher: { name: 'Výpravčí', price: 80, range: 2.1, slow: 0.5, slowTime: 1.5, rate: 1.0 },
+    };
+    const WAVES = [
+      [['cow', 6, 1.2]],
+      [['cow', 8, 1.0]],
+      [['signal', 6, 0.7], ['cow', 5, 1.0]],
+      [['tree', 3, 2.0], ['signal', 8, 0.6]],
+      [['cow', 10, 0.7], ['tree', 4, 1.6]],
+      [['signal', 15, 0.4], ['tree', 5, 1.4]],
+      [['cow', 12, 0.5], ['signal', 8, 0.4], ['tree', 6, 1.2]],
+      [['closure', 1, 3.0], ['signal', 10, 0.5], ['tree', 6, 1.2]],
+    ];
+
+    this._k = { S, OX, OY, CT, SN, SP, P, zi, f, poly, quad, PATH, total, at, buildable, G, AMB, statics, CROSS, crossLights, ENEMIES, TOWERS, WAVES };
+    return this._k;
+  }
+
+  // =====================================================================
+  // Stav hry a herní smyčka
+  // =====================================================================
+  newGame() {
+    return { money: 150, delay: 0, wave: 0, enemies: [], towers: [], shots: [], pulses: [], popups: [], queue: [], timer: 0, state: 'playing', kills: 0, nextId: 1, toast: null, paused: false, speed: 1, time: 0 };
+  }
+
+  componentDidMount() {
+    this._last = Date.now();
+    this._timer = setInterval(() => this.tick(), 33);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this._timer);
+  }
+
+  tick() {
+    const now = Date.now();
+    const raw = Math.min(0.05, (now - (this._last || now)) / 1000);
+    this._last = now;
+    const ambChanged = this.ambientStep(raw);
+    if (this.screen === 'loading') {
+      this.loadT = (this.loadT || 0) + raw;
+      if (this.loadT >= 4.1) this.screen = 'menu';
+      this.forceUpdate();
+      return;
+    }
+    const g = this.g;
+    if (!g) return;
+    let changed = ambChanged;
+    if (g.toast) {
+      g.toast.t -= raw;
+      if (g.toast.t <= 0) g.toast = null;
+      changed = true;
+    }
+    if (g.popups.length) {
+      g.popups.forEach((p) => { p.t += raw; });
+      g.popups = g.popups.filter((p) => p.t < p.life);
+      changed = true;
+    }
+    const busy = g.queue.length || g.enemies.length || g.shots.length || g.pulses.length;
+    if (this.screen === 'game' && g.state === 'playing' && !g.paused && busy) {
+      this.step(raw * g.speed);
+      changed = true;
+    }
+    if (changed) this.forceUpdate();
+  }
+
+  // okolní život: projíždějící vlaky a auta (běží i v menu a při pauze)
+  ambientStep(raw) {
+    this.ambT = (this.ambT || 0) + raw;
+    if (!this.amb) this.amb = { train: null, nextTrain: 4, cars: [], nextCar: 2 };
+    const am = this.amb;
+    if (am.train) {
+      am.train.x += am.train.dir * 4.5 * raw;
+      if ((am.train.dir > 0 && am.train.x > 29) || (am.train.dir < 0 && am.train.x < -2)) am.train = null;
+    } else if (this.ambT >= am.nextTrain) {
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      am.train = { dir, x: dir > 0 ? 3 : 20 };
+      am.nextTrain = this.ambT + 22 + Math.random() * 16;
+    }
+    am.cars.forEach((c) => { c.x += c.dir * 2.4 * raw; });
+    am.cars = am.cars.filter((c) => c.x > 0 && c.x < 24);
+    if (this.ambT >= am.nextCar) {
+      const lane = Math.random() < 0.5 ? 0 : 1;
+      am.cars.push({ lane, dir: lane === 0 ? 1 : -1, x: lane === 0 ? 1 : 23, color: Math.floor(Math.random() * 4) });
+      am.nextCar = this.ambT + 9 + Math.random() * 8;
+    }
+    // překreslovat okolí asi 15× za sekundu
+    this._ambFrame = (this._ambFrame || 0) + 1;
+    return this._ambFrame % 2 === 0;
+  }
+
+  step(dt) {
+    const k = this.K();
+    const g = this.g;
+    g.time += dt;
+
+    // 1) vypustit nepřátele z fronty vlny
+    g.timer -= dt;
+    while (g.queue.length && g.timer <= 0) {
+      const item = g.queue.shift();
+      const s = k.ENEMIES[item[0]];
+      g.enemies.push({ id: g.nextId++, kind: item[0], hp: s.hp, maxHp: s.hp, progress: 0, x: k.PATH[0][0], y: k.PATH[0][1], slowT: 0, slowF: 1, alive: true, done: false, flip: false, phase: Math.random() * 3 });
+      g.timer += item[1];
+    }
+
+    // 2) pohyb po trati (a krok animace podle rychlosti)
+    for (const e of g.enemies) {
+      let sp = k.ENEMIES[e.kind].speed;
+      let anim = 1;
+      if (e.slowT > 0) {
+        sp *= e.slowF;
+        anim = e.slowF;
+        e.slowT -= dt;
+        if (e.slowT <= 0) e.slowF = 1;
+      }
+      e.phase += dt * anim;
+      e.progress += sp * dt;
+      if (e.progress >= k.total) { e.progress = k.total; e.done = true; }
+      const p = k.at(e.progress);
+      const sdx = (p[0] - e.x) * k.CT - (p[1] - e.y) * k.SN;
+      if (Math.abs(sdx) > 0.000001) e.flip = sdx < 0;
+      e.x = p[0];
+      e.y = p[1];
+    }
+
+    // 3) věže míří na nepřítele, který je nejdál
+    for (const t of g.towers) {
+      const T = k.TOWERS[t.type];
+      t.cool -= dt;
+      t.flash = Math.max(0, t.flash - dt);
+      if (t.cool > 0) continue;
+      const inRange = g.enemies.filter((e) => e.alive && !e.done && Math.hypot(e.x - t.x, e.y - t.y) <= T.range);
+      if (!inRange.length) continue;
+      if (t.type === 'dispatcher') {
+        inRange.forEach((e) => { e.slowF = Math.min(e.slowF, T.slow); e.slowT = Math.max(e.slowT, T.slowTime); });
+        g.pulses.push({ x: t.x, y: t.y, range: T.range, t: 0, life: 0.6 });
+      } else {
+        inRange.sort((a, b) => b.progress - a.progress);
+        g.shots.push({ x: t.x, y: t.y, z: 1.1, target: inRange[0].id, damage: T.damage, type: t.type });
+      }
+      t.cool = T.rate;
+      t.flash = 0.3;
+    }
+
+    // 4) střely letí za cílem
+    const byId = {};
+    g.enemies.forEach((e) => { byId[e.id] = e; });
+    g.shots = g.shots.filter((sh) => {
+      const e = byId[sh.target];
+      if (!e || !e.alive || e.done) return false;
+      const dx = e.x - sh.x, dy = e.y - sh.y;
+      const dist = Math.hypot(dx, dy);
+      const move = 9 * dt;
+      if (dist <= move) {
+        e.hp -= sh.damage;
+        if (e.hp <= 0) { e.hp = 0; e.alive = false; }
+        return false;
+      }
+      sh.x += (dx / dist) * move;
+      sh.y += (dy / dist) * move;
+      sh.z += (0.5 - sh.z) * Math.min(1, move / dist);
+      return true;
+    });
+    g.pulses = g.pulses.filter((p) => { p.t += dt; return p.t < p.life; });
+
+    // 5) odměny a zpoždění
+    const left = [];
+    for (const e of g.enemies) {
+      const E = k.ENEMIES[e.kind];
+      if (!e.alive) {
+        g.money += E.reward;
+        g.kills++;
+        g.popups.push({ coin: true, x: e.x, y: e.y, text: '+' + E.reward, t: 0, life: 1.1 });
+      } else if (e.done) {
+        g.delay += E.delay;
+        g.popups.push({ coin: false, x: null, y: null, text: '+' + E.delay + ' min', t: 0, life: 1.4 });
+      } else left.push(e);
+    }
+    g.enemies = left;
+
+    // 6) konec hry
+    if (g.delay >= 60) g.state = 'lost';
+    else if (g.wave >= k.WAVES.length && !g.queue.length && !g.enemies.length) g.state = 'won';
+  }
+
+  // =====================================================================
+  // Ovládání
+  // =====================================================================
+  toast(text) {
+    this.g.toast = { text, t: 1.8 };
+    this.forceUpdate();
+  }
+
+  // klik na obrazovce -> políčko na zemi (obrácená projekce)
+  tileFromEvent(e) {
+    const k = this.K();
+    const rect = e.currentTarget.getBoundingClientRect();
+    const scale = rect.width / 960 || 1;
+    const sx = (e.clientX - rect.left) / scale;
+    const sy = (e.clientY - rect.top) / scale + 56;
+    const a = (sx - k.OX) / k.S;
+    const b = (sy - k.OY) / k.S / k.SP;
+    const x = k.CT * a + k.SN * b;
+    const y = -k.SN * a + k.CT * b;
+    return [Math.floor(x), Math.floor(y)];
+  }
+
+  selectedType() {
+    return (this.state && this.state.selected) || this.props.selected || 'worker';
+  }
+
+  boardClick(e) {
+    const k = this.K();
+    const g = this.g;
+    if (g.state !== 'playing') return;
+    const tile = this.tileFromEvent(e);
+    const c = tile[0], r = tile[1];
+    const existing = g.towers.find((t) => t.c === c && t.r === r);
+    if (existing) { this.setState({ inspect: existing.id }); return; }
+    const type = this.selectedType();
+    const T = k.TOWERS[type];
+    if (!k.buildable.has(c + ',' + r)) { this.toast('Sem stavět nejde – jen na volnou trávu vedle trati'); return; }
+    if (g.money < T.price) { this.toast('Nedostatek peněz (' + T.name + ' stojí ' + T.price + ' Kč)'); return; }
+    g.money -= T.price;
+    g.towers.push({ id: g.nextId++, type, c, r, x: c + 0.5, y: r + 0.5, cool: 0, flash: 0 });
+    this.setState({ inspect: null });
+  }
+
+  boardMove(e) {
+    const tile = this.tileFromEvent(e);
+    const key = tile[0] + ',' + tile[1];
+    if (!this.state || this.state.hover !== key) this.setState({ hover: key });
+  }
+
+  nextWave() {
+    const k = this.K();
+    const g = this.g;
+    if (g.state !== 'playing' || g.queue.length || g.enemies.length || g.wave >= k.WAVES.length) return;
+    for (const grp of k.WAVES[g.wave]) for (let i = 0; i < grp[1]; i++) g.queue.push([grp[0], grp[2]]);
+    g.wave++;
+    g.timer = 0;
+    g.paused = false;
+    this._last = Date.now();
+    this.forceUpdate();
+  }
+
+  // =====================================================================
+  // Data pro šablonu
+  // =====================================================================
+  renderVals() {
+    const k = this.K();
+    if (!this.g) this.g = this.newGame();
+    if (!this.screen) {
+      // obrazovky: načítání -> menu -> hra
+      this.screen = this.props.startScreen || 'loading';
+      this.loadT = 0;
+    }
+    const g = this.g;
+    const st = this.state || {};
+    const sel = this.selectedType();
+    const P = k.P, f = k.f;
+    const inProgress = g.queue.length > 0 || g.enemies.length > 0;
+
+    // přejezd: závory dole a blikání, když jede vlna
+    const crossing = inProgress ? k.CROSS.down : k.CROSS.up;
+    const blinkOn = Math.floor(g.time * 3) % 2 === 0;
+    const lights = k.crossLights.map((l) => {
+      const on = inProgress && (l.phase === 0 ? blinkOn : !blinkOn);
+      return Object.assign({}, l, { color: on ? '#FF3B30' : '#4A1A1A', glow: on ? '0 0 8px 3px rgba(255,59,48,0.75)' : 'none' });
+    });
+
+    // věže a nepřátelé (z-index podle hloubky, aby je stromy a domy správně zakryly)
+    const sprites = [];
+    for (const t of g.towers) {
+      const p = P(t.x, t.y, 0);
+      sprites.push({ z: k.zi(t.x, t.y), sprite: t.type, size: 54, left: f(p[0] - 27), top: f(p[1] - 41), flip: 'none', phase: f(g.time + t.id * 0.7), action: f(t.flash / 0.3), showHp: false, hpLeft: 0, hpTop: 0, hpW: 0, hpPct: 0, slowed: false, ringLeft: 0, ringTop: 0, ringW: 0, ringH: 0 });
+    }
+    for (const e of g.enemies) {
+      const s = k.ENEMIES[e.kind].size;
+      const p = P(e.x, e.y, 0);
+      const top = p[1] - s / 2 - (s * 14) / 60;
+      sprites.push({
+        z: k.zi(e.x, e.y),
+        sprite: e.kind,
+        size: s,
+        left: f(p[0] - s / 2),
+        top: f(top),
+        flip: e.flip ? 'scaleX(-1)' : 'none',
+        phase: f(e.phase * 100) / 100,
+        action: 0,
+        showHp: e.hp < e.maxHp,
+        hpW: f(s * 0.7),
+        hpLeft: f(p[0] - s * 0.35),
+        hpTop: f(top - 4),
+        hpPct: f((e.hp / e.maxHp) * 100),
+        slowed: e.slowT > 0,
+        ringW: f(s * 0.9),
+        ringH: f(s * 0.45),
+        ringLeft: f(p[0] - s * 0.45),
+        ringTop: f(p[1] - s * 0.225),
+      });
+    }
+
+    // okolí: vlak dole, auta, traktor, pasoucí se krávy, kouř z komínů
+    const ambT = this.ambT || 0;
+    const am = this.amb || { train: null, cars: [] };
+    const A = k.AMB;
+    const ambVox = [];
+    if (am.train) {
+      for (let i = 0; i < 4; i++) {
+        const it = i === 0 ? A.LOCO : A.COACH;
+        const start = am.train.dir > 0 ? am.train.x - (i + 1) * A.CAR_L - i * A.CAR_GAP : am.train.x + i * (A.CAR_L + A.CAR_GAP);
+        ambVox.push(A.mv(it, start));
+      }
+    }
+    am.cars.forEach((c) => ambVox.push(A.mv(A.CAR_V[c.lane][c.color], c.x)));
+    const span = 4.6, tsp = 0.4, u = (ambT * tsp) % (2 * span);
+    const tractorRight = u < span;
+    const tractorX = 12.8 + (tractorRight ? u : 2 * span - u);
+    ambVox.push(A.mv(A.TRACTOR[tractorRight ? 0 : 1], tractorX));
+    [[5.0, 1.85, 0.7, 0.3, 0], [6.2, 2.2, 0.6, 0.24, 2]].forEach(([cx, cy, amp, sp, off]) => {
+      const x = cx + amp * Math.sin(ambT * sp + off);
+      const vx = Math.cos(ambT * sp + off);
+      const p = P(x, cy, 0);
+      sprites.push({ z: k.zi(x, cy), sprite: 'cow', size: 34, left: f(p[0] - 17), top: f(p[1] - 25), flip: vx < 0 ? 'scaleX(-1)' : 'none', phase: f(ambT * 0.5), action: 0, showHp: false, hpLeft: 0, hpTop: 0, hpW: 0, hpPct: 0, slowed: false, ringLeft: 0, ringTop: 0, ringW: 0, ringH: 0 });
+    });
+    const smoke = [];
+    const puff = (x, y, z, a, size) => {
+      const p = P(x + a * 0.35, y - a * 0.1, z + a * 1.0);
+      const sz = size + a * 9;
+      smoke.push({ left: f(p[0] - sz / 2), top: f(p[1] - sz / 2), size: f(sz), opacity: f(0.6 * (1 - a)) });
+    };
+    A.CHIMNEYS.forEach(([cx, cy], ci) => { for (let i = 0; i < 3; i++) puff(cx, cy, 1.62, (ambT * 0.3 + i / 3 + ci * 0.21) % 1, 5); });
+    const exX = tractorX + (tractorRight ? 0.8 : 0.15);
+    for (let i = 0; i < 2; i++) puff(exX, A.TRACTOR_Y, 0.6, (ambT * 0.7 + i / 2) % 1, 3);
+
+    const shots = g.shots.map((sh) => {
+      const T = k.TOWERS[sh.type];
+      const p = P(sh.x, sh.y, sh.z);
+      return { left: f(p[0] - T.shot / 2), top: f(p[1] - T.shot / 2), size: T.shot, color: T.color };
+    });
+    const pulses = g.pulses.map((pl) => {
+      const p = P(pl.x, pl.y, 0);
+      const rr = pl.range * (0.25 + 0.75 * (pl.t / pl.life));
+      const rx = rr * k.S, ry = rr * k.S * k.SP;
+      return { left: f(p[0] - rx), top: f(p[1] - ry), w: f(rx * 2), h: f(ry * 2), alpha: f(1 - pl.t / pl.life) };
+    });
+
+    // najetí myší: zvýraznění políčka a dosah
+    let hoverD = 'M0 0', hoverFill = 'none', hoverStroke = 'none';
+    let showRange = false, rangeLeft = 0, rangeTop = 0, rangeW = 0, rangeH = 0;
+    let rangeColor = 'rgba(255,255,255,0.9)', rangeFill = 'rgba(255,255,255,0.12)';
+    const setRange = (x, y, R, blue) => {
+      const p = P(x, y, 0);
+      showRange = true;
+      rangeLeft = f(p[0] - R * k.S);
+      rangeTop = f(p[1] - R * k.S * k.SP);
+      rangeW = f(R * k.S * 2);
+      rangeH = f(R * k.S * k.SP * 2);
+      if (blue) { rangeColor = 'rgba(140,195,255,0.95)'; rangeFill = 'rgba(127,184,255,0.16)'; }
+    };
+    const inspected = g.towers.find((t) => t.id === st.inspect);
+    if (inspected) setRange(inspected.x, inspected.y, k.TOWERS[inspected.type].range, inspected.type === 'dispatcher');
+    // stavění: "duch" věže pod myší místo kurzoru, když na ni máš peníze
+    const isGame = this.screen === 'game';
+    const placing = isGame && g.state === 'playing';
+    const selT = k.TOWERS[sel];
+    const affordable = g.money >= selT.price;
+    let showGhost = false, ghostLeft = 0, ghostTop = 0, ghostOpacity = 0.8, ghostZ = 0;
+    let boardCursor = 'default';
+    if (placing && st.hover) {
+      const parts = st.hover.split(',');
+      const c = Number(parts[0]), r = Number(parts[1]);
+      const tower = g.towers.find((t) => t.c === c && t.r === r);
+      const canPlace = k.buildable.has(st.hover);
+      if (tower) {
+        hoverD = k.quad(c, r, c + 1, r + 1, 0.02);
+        hoverFill = 'rgba(255,255,255,0.25)';
+        hoverStroke = '#FFFFFF';
+        boardCursor = 'pointer';
+        setRange(tower.x, tower.y, k.TOWERS[tower.type].range, tower.type === 'dispatcher');
+      } else if (affordable && r >= 1 && r < 17 && c >= -1 && c < 21) {
+        boardCursor = 'none';
+        hoverD = k.quad(c, r, c + 1, r + 1, 0.02);
+        hoverFill = canPlace ? 'rgba(255,255,255,0.35)' : 'rgba(224,52,47,0.4)';
+        hoverStroke = canPlace ? '#FFFFFF' : '#E0342F';
+        const gp = P(c + 0.5, r + 0.5, 0);
+        showGhost = true;
+        ghostLeft = f(gp[0] - 27);
+        ghostTop = f(gp[1] - 41);
+        ghostOpacity = canPlace ? 0.8 : 0.35;
+        ghostZ = k.zi(c + 0.5, r + 0.5) + 1;
+        if (canPlace) setRange(c + 0.5, r + 0.5, selT.range, sel === 'dispatcher');
+      }
+    }
+
+    // zvýraznění všech volných míst ke stavbě
+    const occupied = g.towers.map((t) => t.c + ',' + t.r);
+    const spotsKey = occupied.join(';');
+    if (this._spotsKey !== spotsKey || !this._spots) {
+      this._spotsKey = spotsKey;
+      let d = '';
+      k.buildable.forEach((kk) => {
+        if (occupied.indexOf(kk) >= 0) return;
+        const pr = kk.split(',');
+        const c = Number(pr[0]), r = Number(pr[1]);
+        d += k.quad(c + 0.1, r + 0.1, c + 0.9, r + 0.9, 0.02);
+      });
+      this._spots = d || 'M0 0';
+    }
+    const showSpots = placing && (st.showSpots || (st.hover && affordable));
+
+    // vyskakující +Kč u zničeného nepřítele a +min u stanice
+    const popups = isGame ? g.popups.map((pp) => {
+      const q = pp.t / pp.life;
+      const opacity = q < 0.6 ? 1 : f(1 - (q - 0.6) / 0.4);
+      if (pp.coin) {
+        const p = P(pp.x, pp.y, 1.3);
+        return { left: f(p[0]), top: f(p[1] - 12 - q * 34), opacity, text: pp.text, coin: true, color: '#FFD84A', fontSize: 18 };
+      }
+      return { left: 700, top: f(104 - q * 28), opacity, text: pp.text, coin: false, color: '#FF6B5E', fontSize: 17 };
+    }) : [];
+
+    // načítací obrazovka: vlak jede do stanice jako ukazatel průběhu
+    const lp = Math.min(1, (this.loadT || 0) / 3.4);
+    const eased = lp < 0.5 ? 2 * lp * lp : 1 - Math.pow(-2 * lp + 2, 2) / 2;
+    const barFill = f(eased * 360);
+    const pct = Math.round(eased * 100);
+    const TIPS = [
+      'Tip: Výpravčí nestřílí, ale zpomalí všechno v dosahu.',
+      'Tip: Věže míří na problém, který je nejblíž stanici.',
+      'Tip: Na konci přijede výluka – šetři na drezínu.',
+    ];
+
+    const towers = ['worker', 'draisine', 'dispatcher'].map((id) => {
+      const T = k.TOWERS[id];
+      return {
+        id,
+        name: T.name,
+        price: T.price,
+        pick: () => this.setState({ selected: id, inspect: null }),
+        pressed: id === sel ? 'true' : 'false',
+        border: id === sel ? '#FFB020' : 'rgba(255,255,255,0.18)',
+        bg: id === sel ? 'rgba(255,176,32,0.22)' : 'rgba(255,255,255,0.06)',
+        opacity: g.money >= T.price ? 1 : 0.55,
+      };
+    });
+
+    let hudLight = '', hudDark = '';
+    for (let i = 0; i < 21; i++) {
+      const x = i * 48;
+      const down = 'M' + x + ' 0 L' + (x + 48) + ' 0 L' + (x + 24) + ' 56 Z ';
+      const up = 'M' + (x + 24) + ' 56 L' + (x + 48) + ' 0 L' + (x + 72) + ' 56 Z ';
+      if (i % 3 === 0) hudLight += down;
+      if (i % 4 === 1) hudDark += up;
+      if (i % 5 === 3) hudDark += down;
+    }
+
+    const delay = Math.min(60, g.delay);
+    const nextDisabled = g.state !== 'playing' || inProgress || g.wave >= k.WAVES.length;
+    let bannerText = '';
+    if (g.toast) bannerText = g.toast.text;
+    else if (!isGame) bannerText = '';
+    else if (g.wave === 0 && !g.towers.length) bannerText = '1) Vyber věž dole   2) Klikni na trávu vedle trati   3) Spusť vlnu';
+    else if (g.wave === 0) bannerText = 'Až budeš připraven, klikni na „Další vlna“';
+    else if (g.paused) bannerText = 'Pauza';
+
+    return {
+      G: k.G,
+      isLoading: this.screen === 'loading',
+      isMenu: this.screen === 'menu',
+      isGame,
+      gameDisplay: isGame ? 'block' : 'none',
+      gameTitle: this.props.gameTitle || 'VÝLUKA',
+      barFill,
+      barTrainX: barFill,
+      wheelA: f((barFill * -9) % 360),
+      loadText: pct < 100 ? 'Načítání… ' + pct + ' %' : 'Hotovo – vlak je ve stanici!',
+      tipText: TIPS[Math.floor((this.loadT || 0) / 1.4) % TIPS.length],
+      spotsD: showSpots ? this._spots : 'M0 0',
+      spotsLabel: st.showSpots ? 'Místa ke stavbě: ZAP' : 'Místa ke stavbě: VYP',
+      spotsAria: st.showSpots ? 'true' : 'false',
+      spotsBg: st.showSpots ? 'rgba(255,176,32,0.3)' : 'transparent',
+      spotsBorder: st.showSpots ? '#FFB020' : 'rgba(255,255,255,0.4)',
+      showGhost, ghostLeft, ghostTop, ghostOpacity, ghostZ,
+      ghostKind: sel,
+      ghostPhase: f(g.time),
+      boardCursor,
+      popups,
+      delayTextColor: delay >= 45 ? '#FF6B5E' : delay >= 30 ? '#FFC24D' : '#5FD07A',
+      onPlay: () => { this.g = this.newGame(); this.screen = 'game'; this.setState({ inspect: null, hover: null }); },
+      onQuit: () => this.toast('V prototypu se nic nezavře – ve hře tohle ukončí aplikaci'),
+      onMenu: () => { this.g = this.newGame(); this.screen = 'menu'; this.setState({ inspect: null, hover: null }); },
+      onSkip: () => { this.screen = 'menu'; this.forceUpdate(); },
+      onToggleSpots: () => this.setState({ showSpots: !st.showSpots }),
+      vox: k.statics.concat(crossing, ambVox),
+      smoke,
+      lights,
+      sprites,
+      shots,
+      pulses,
+      hoverD, hoverFill, hoverStroke,
+      showRange, rangeLeft, rangeTop, rangeW, rangeH, rangeColor, rangeFill,
+      towers,
+      hudLight, hudDark,
+      money: g.money,
+      delay,
+      delayPct: (delay / 60) * 100,
+      delayColor: delay >= 45 ? '#E0342F' : delay >= 30 ? '#FFB020' : '#3FB05A',
+      waveText: g.wave + ' / ' + k.WAVES.length,
+      nextDisabled,
+      nextBg: nextDisabled ? '#8A97A8' : '#FFB020',
+      pauseLabel: g.paused ? 'Pokračovat' : 'Pauza',
+      pausedAria: g.paused ? 'true' : 'false',
+      pauseBg: g.paused ? 'rgba(255,176,32,0.35)' : 'transparent',
+      fastAria: g.speed > 1 ? 'true' : 'false',
+      speedBg: g.speed > 1 ? 'rgba(255,176,32,0.35)' : 'transparent',
+      showBanner: bannerText !== '',
+      bannerText,
+      ended: isGame && g.state !== 'playing',
+      endShade: g.state === 'won' ? 'rgba(6,14,28,0.6)' : 'rgba(28,6,6,0.6)',
+      endColor: g.state === 'won' ? '#5FD07A' : '#FF6B5E',
+      endTitle: g.state === 'won' ? 'Vlaky jedou včas!' : 'Cestující to vzdali',
+      endText: g.state === 'won'
+        ? 'Přežil jsi všech ' + k.WAVES.length + ' vln. Odstraněno problémů: ' + g.kills + ', zpoždění ' + delay + ' min.'
+        : 'Zpoždění dosáhlo 60 minut ve vlně ' + g.wave + '. Odstraněno problémů: ' + g.kills + '.',
+      onBoardClick: (e) => this.boardClick(e),
+      onBoardMove: (e) => this.boardMove(e),
+      onBoardLeave: () => this.setState({ hover: null }),
+      onNextWave: () => this.nextWave(),
+      onPause: () => { g.paused = !g.paused; this._last = Date.now(); this.forceUpdate(); },
+      onSpeed: () => { g.speed = g.speed > 1 ? 1 : 2; this.forceUpdate(); },
+      onRestart: () => { this.g = this.newGame(); this.setState({ inspect: null, hover: null }); },
+    };
+  }
+}
+</script>
+</body>
+</html>
