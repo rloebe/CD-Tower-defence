@@ -1,8 +1,10 @@
-"""Testy trati: délka, body na trati, kontrola stavění vedle trati."""
+"""Testy trati: délka, body na trati, směr jízdy, poloha vůči trati."""
 
+import iso
 import track
+import world
 
-# jednoduchá trať ve tvaru L: 100 px doprava, pak 50 px dolů
+# jednoduchá trať ve tvaru L: 100 políček doprava, pak 50 dolů
 L_PATH = [(0, 0), (100, 0), (100, 50)]
 
 
@@ -28,8 +30,20 @@ def test_is_on_path():
     assert not track.is_on_path((50, 40), L_PATH, margin=10)  # daleko od trati
 
 
-def test_real_map_starts_off_screen_and_ends_in_station():
-    start = track.PATH[0]
-    end = track.PATH[-1]
-    assert start[0] < 0
-    assert track.STATION_RECT.collidepoint(end)
+def test_direction_along_the_path():
+    assert track.direction_at_distance(L_PATH, 10) == (1, 0)  # první úsek jede doprava
+    assert track.direction_at_distance(L_PATH, 120) == (0, 1)  # druhý úsek dolů
+    assert track.direction_at_distance(L_PATH, 999) == (0, 1)  # za koncem = směr posledního úseku
+
+
+def test_real_track_starts_off_screen_and_ends_at_praha():
+    start_x, _ = iso.to_screen(*track.PATH[0])
+    assert start_x < 0  # nepřátelé přijíždějí zleva zpoza okraje obrazovky
+    end_x, end_y = track.PATH[-1]
+    px, py, pw, pd = world.PRAHA
+    assert px <= end_x <= px + pw + 0.5  # konec trati je u nádraží Praha
+    assert py + pd < end_y  # zarážedlo je před budovou, ne v ní
+
+
+def test_real_track_length():
+    assert round(track.path_length(track.PATH), 1) == 40.7
