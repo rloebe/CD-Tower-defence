@@ -4,7 +4,7 @@ Postup, jak hru ručně otestovat po spuštění (`python src/main.py`, na Windo
 
 | # | Krok | Očekávaný výsledek | OK? |
 |---|---|---|---|
-| 1 | Spustit hru | Hra se otevře přes celou obrazovku, obraz je ostrý (hrany nejsou zubaté). Zobrazí se načítání: název „VÝLUKA“, pod ním ukazatel průběhu s vláčkem, který jede doprava, a tipy. | |
+| 1 | Spustit hru | Hra se otevře přes celou obrazovku, obraz je ostrý (hrany nejsou zubaté). Zobrazí se načítání: název „DELAY“, pod ním ukazatel průběhu s vláčkem, který jede doprava, a tipy. | |
 | 2 | Počkat, nebo kliknout na „Přeskočit“ | Objeví se hlavní menu přes ztmavenou mapu s tlačítky Hrát a Ukončit. České znaky (ž, ě, ř…) jsou správně. | |
 | 3 | Kliknout na **Hrát** | Mapa s tratí z Kolína do Prahy hl. n. Nahoře lišta: Rozpočet 150 Kč, Zpoždění 0 / 60 min, Vlna 0 / 8. Nad Prahou panel se zpožděním. Vlevo dole výběr věží (vybraný Traťový dělník). Nahoře nápověda. | |
 | 4 | Najet myší na trávu vedle trati | Místo kurzoru je vidět průhledná věž, políčko je bílé, kolem je kruh dosahu. Všechna volná místa ke stavbě jsou zvýrazněná. Nad tratí nebo silnicí je políčko červené. | |

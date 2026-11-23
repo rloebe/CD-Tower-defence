@@ -1,4 +1,4 @@
-# Vizuální design – Výluka
+# Vizuální design – Delay
 
 Takhle má hra vypadat. Předloha je hratelný prototyp na design plátně v Claude (odkaz má Robin). Zdrojové soubory prototypu jsou v `docs/design-prototyp/` – jsou tam přesné souřadnice, barvy a tvary všech postav, takže se dají přenést do pygame 1:1. Prototyp je jen předloha, není součástí hry.
 

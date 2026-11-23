@@ -1,4 +1,4 @@
-# Design dokument – Výluka
+# Design dokument – Delay
 
 **Žánr:** Tower defence
 **Téma:** České dráhy

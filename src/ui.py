@@ -249,7 +249,7 @@ def draw_loading(surface, game):
     """Název hry přes ztmavenou mapu, malý ukazatel průběhu a vláček, který po něm jede."""
     shade_screen(surface, (8, 24, 48), 180)
     text(surface, "ČESKÉ DRÁHY · TOWER DEFENCE", 13, (480, 150), LABEL)
-    text(surface, "VÝLUKA", 112, (480, 222))
+    text(surface, "DELAY", 112, (480, 222))
     text(surface, "Ubraň trať z Kolína do Prahy", 18, (480, 292), TEXT_DIM)
 
     # plynulý průběh: zpočátku pomalu, uprostřed rychle, na konci zpomalí (jako rozjezd a brzdění vlaku)
@@ -310,7 +310,7 @@ def draw_menu(surface, game):
     shade_screen(surface, (8, 24, 48), 140)
     panel(surface, 180, 110, 600, 300, alpha=235, cut=24)
     text(surface, "ČESKÉ DRÁHY · TOWER DEFENCE", 13, (480, 148), LABEL)
-    text(surface, "VÝLUKA", 88, (480, 207))
+    text(surface, "DELAY", 88, (480, 207))
     text(surface, "Ubraň trať před problémy, než dojedou do stanice.", 18, (480, 264), TEXT_DIM)
     button(surface, 328, 306, 150, 48, "Hrát", "start", primary=True, size=20)
     button(surface, 492, 306, 140, 48, "Ukončit", "quit", size=18, slant=False)
