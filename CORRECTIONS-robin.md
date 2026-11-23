@@ -12,12 +12,12 @@ Zápis každého případu, kdy AI udělala něco špatně a já to musel opravi
 - **Jak jsem to opravil:**
 -->
 
-## Případ 1: Hra nešla spustit podle README (23. 11. 2026)
+## Případ 1: Příliš mnoho malých commitů (23. 11. 2026)
 
-- **Co jsem chtěl:** Spustit hru na svém počítači doma přesně podle návodu v README.
-- **Co AI udělala špatně:** V README byl jen příkaz `python src/main.py`. AI nepočítala s tím, že na Windows často příkaz `python` nefunguje (Python není v PATH), a nenapsala, že se dá použít `py`.
-- **Jak jsem to poznal:** Terminál napsal „Python nebyl nalezen“. Zkusil jsem `python --version` se stejnou chybou, ale `py --version` vypsal Python 3.13.7.
-- **Jak jsem to opravil:** Spustil jsem hru přes `py src/main.py` a nechal jsem do README doplnit poznámku pro Windows, že když `python` nefunguje, má se použít `py`. To je důležité, protože podle zadání musí jít hra spustit na cizím počítači podle README.
+- **Co jsem chtěl:** Čistou a čitelnou historii v gitu, jak chce zadání: jeden commit za každou větší, důležitou změnu.
+- **Co AI udělala špatně:** Rozdělila práci na moc malých commitů. Jen větev `robin/iso-core` měla 5 commitů a v historii jich bylo celkově zbytečně hodně, i na věci, které patřily k sobě.
+- **Jak jsem to poznal:** Podíval jsem se na seznam commitů na GitHubu a bylo jich na tak krátkou dobu práce moc.
+- **Jak jsem to opravil:** Řekl jsem AI, ať dělá jeden commit na každou důležitou věc. Staré commity už byly sloučené do `main`, takže jsme je nemazali: přepsání historie na `main` by rozbilo kopii repozitáře, kterou má Matěj. Pravidlo „jeden commit na větší změnu, historie na `main` se nepřepisuje“ je teď v `CLAUDE.md`, takže ho dodržuje i Matějův Claude.
 
 ## Případ 2: Hra nebyla přes celou obrazovku (23. 11. 2026)
 
