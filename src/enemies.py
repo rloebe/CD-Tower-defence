@@ -102,19 +102,23 @@ class Enemy:
     # ---------- Kreslení ----------
 
     def draw(self, surface):
+        """Nakreslí nepřítele: modrý kroužek když je zpomalený, postavičku a pruh životů."""
         sx, sy = iso.to_screen(self.x, self.y)
+        size = iso.px(self.size)  # velikost na skutečné obrazovce v pixelech
         if self.slow_timer > 0:
-            ring = pygame.Rect(0, 0, self.size * 0.9, self.size * 0.45)
+            ring = pygame.Rect(0, 0, size * 0.9, size * 0.45)
             ring.center = (sx, sy)
-            pygame.draw.ellipse(surface, (127, 184, 255), ring, 3)
+            pygame.draw.ellipse(surface, (127, 184, 255), ring, max(2, round(iso.px(3))))
 
-        # postavička stojí "nohama" na trati
-        center = (sx, sy - self.size * 14 / 60)
+        # postavička stojí "nohama" na trati (nohy jsou 14/60 velikosti pod středem)
+        center = (sx, sy - size * 14 / 60)
         sprites.draw_sprite(surface, self.kind, center, self.size, phase=self.phase, flip=self.facing_left)
 
+        # pruh životů jen u zraněných
         if self.hp < self.max_hp:
-            width = int(self.size * 0.7)
+            width = int(size * 0.7)
+            height = max(3, round(iso.px(5)))
             left = int(sx - width / 2)
-            top = int(center[1] - self.size / 2 - 4)
-            pygame.draw.rect(surface, settings.RED, (left, top, width, 5))
-            pygame.draw.rect(surface, settings.GREEN, (left, top, int(width * self.hp / self.max_hp), 5))
+            top = int(center[1] - size / 2 - iso.px(4))
+            pygame.draw.rect(surface, settings.RED, (left, top, width, height))
+            pygame.draw.rect(surface, settings.GREEN, (left, top, int(width * self.hp / self.max_hp), height))

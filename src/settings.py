@@ -1,11 +1,20 @@
 """Společné konstanty hry. Žádná logika, jen čísla a barvy."""
 
-# Okno
+# Okno: hra je navržená pro "logickou" plochu 960 × 640 (všechny rozměry v kódu
+# jsou v těchto logických pixelech). Na skutečné obrazovce se vše zvětší o SCALE
+# a vycentruje posunem OFFSET – main.py to nastaví podle rozlišení monitoru.
 WIDTH = 960
 HEIGHT = 640
 HUD_HEIGHT = 56  # horní lišta (rozpočet, zpoždění, vlna)
 FPS = 60
 TITLE = "Výluka – ČD Tower Defence"
+
+# Skutečná obrazovka (nastaví main.py při spuštění; výchozí = okno 960 × 640)
+SCREEN_W = WIDTH
+SCREEN_H = HEIGHT
+SCALE = 1.0  # kolikrát je obrazovka větší než logická plocha
+OFFSET_X = 0  # o kolik pixelů je logická plocha posunutá, aby byla uprostřed
+OFFSET_Y = 0
 
 # Panel s výběrem věží vlevo dole (pod ním se nestaví): x, y, šířka, výška v pixelech
 PICKER_RECT = (16, 528, 352, 112)
@@ -15,6 +24,16 @@ START_MONEY = 150  # Kč na začátku hry
 MAX_DELAY = 60  # minut zpoždění = prohra
 LOAD_TIME = 3.4  # sekund trvá načítací obrazovka
 POPUP_LIFE = 1.2  # sekund visí "+10 Kč" / "+5 min"
+
+# Věže: společná data pro výběr věží (ui.py) i jejich chování (towers.py).
+#   price = cena v Kč, range = dosah v políčkách, damage = poškození jedné střely,
+#   rate = sekund mezi výstřely, slow / slow_time = zpomalení (výpravčí)
+TOWER_TYPES = {
+    "worker": {"name": "Traťový dělník", "price": 50, "range": 2.3, "damage": 10, "rate": 1.0},
+    "draisine": {"name": "Pracovní drezína", "price": 120, "range": 3.1, "damage": 25, "rate": 1.2},
+    "dispatcher": {"name": "Výpravčí", "price": 80, "range": 2.1, "damage": 0, "rate": 1.0, "slow": 0.5, "slow_time": 1.5},
+}
+TOWER_ORDER = ["worker", "draisine", "dispatcher"]  # pořadí v panelu výběru
 
 # Kamera (izometrie jako v Unrailed): svět v políčkách -> obrazovka v pixelech
 TILE = 46  # velikost políčka v pixelech

@@ -9,6 +9,10 @@ Proč je to takhle rozdělené:
 - Vysoké objekty se lepí společně s nepřáteli seřazené podle hloubky
   (odzadu dopředu), aby strom před tratí správně zakryl krávu za ním.
 
+- Aby hrany nebyly "zubaté", kreslí se všechno 2× větší (SUPERSAMPLE) a pak
+  se to plynule zmenší. Zmenšení zprůměruje okrajové pixely = vyhlazení.
+  Dělá se to jen jednou při spuštění, takže to hru nezpomalí.
+
 Rozložení mapy (kde co stojí) je v world.py, převod na obrazovku v iso.py.
 """
 
@@ -72,6 +76,9 @@ def face_left(x, y0, y1, z0, z1):
     return [P(x, y0, z0), P(x, y1, z0), P(x, y1, z1), P(x, y0, z1)]
 
 
+SUPERSAMPLE = 2  # mapa se předkreslí 2× větší a pak plynule zmenší (hladké hrany)
+
+
 def bake(shapes):
     """Nakreslí seznam tvarů [(barva, body)] do malého průhledného obrázku.
 
@@ -93,6 +100,13 @@ def wheat_parts():
     x0, w = world.WHEAT[0], world.WHEAT[2]
     gap = world.ROAD_HALF + 0.15  # kousek místa mezi polem a silnicí
     return [(x0, world.ROAD_X - gap), (world.ROAD_X + gap, x0 + w)]
+
+
+def shrink(image, pos):
+    """Plynule zmenší 2× větší obrázek objektu na skutečnou velikost (hladké hrany)."""
+    w, h = image.get_size()
+    small = pygame.transform.smoothscale(image, (max(1, round(w / SUPERSAMPLE)), max(1, round(h / SUPERSAMPLE))))
+    return small, (round(pos[0] / SUPERSAMPLE), round(pos[1] / SUPERSAMPLE))
 
 
 def offset_line(path, d, z):
@@ -142,37 +156,53 @@ class Scenery:
     def __init__(self):
         self.time = 0.0  # vlastní hodiny scény (blikání přejezdu běží i v menu)
         self.rng = random.Random(777)  # pevný seed = mapa vypadá pokaždé stejně
-        self.font = pygame.font.Font(None, 22)
+        self.font = pygame.font.Font(None, max(12, round(iso.px(22))))
 
         # vysoké objekty: seznam (hloubka, obrázek, pozice)
         self.objects = []
-        self.ground = pygame.Surface((settings.WIDTH, settings.HEIGHT))
-        self._build_ground()
-        self._build_objects()
-        self._build_crossing()
+        ss = SUPERSAMPLE
+        big_size = (settings.SCREEN_W * ss, settings.SCREEN_H * ss)
 
+        # Vše se kreslí 2× větší (iso.supersample zvětší i souřadnice z iso.to_screen)
+        with iso.supersample(ss):
+            self.ground = pygame.Surface(big_size)
+            self._build_ground()
+            self._build_objects()
+            self._build_crossing()
+            # Všechny ploché vrstvy slepíme do JEDNOHO obrázku: zem, stíny dole,
+            # skalní plošina a stíny na ní. Každý snímek se pak lepí jen tenhle jeden.
+            self.ground.blit(self.shadows_low, (0, 0))
+            for color, pts in self._cliffs + self._plateau_tops:
+                pygame.draw.polygon(self.ground, color, pts)
+            self.ground.blit(self.shadows_high, (0, 0))
+
+        # ...a pak plynule zmenšíme na skutečnou velikost obrazovky
+        self.ground = pygame.transform.smoothscale(self.ground, (settings.SCREEN_W, settings.SCREEN_H))
+        del self.shadows_low, self.shadows_high, self._cliffs, self._plateau_tops
+
+        # tohle se počítá už v normální velikosti (kreslí se každý snímek)
         # dráty trolejového vedení se kreslí úplně navrch (jsou vysoko nad vším)
         self.wires = [[P(x, y, z) for x, y in track.PATH] for z in (1.62, 1.78)]
-
-        # Všechny ploché vrstvy slepíme do JEDNOHO obrázku: zem, stíny dole,
-        # skalní plošina a stíny na ní. Každý snímek se pak lepí jen tenhle jeden.
-        self.ground.blit(self.shadows_low, (0, 0))
-        for color, pts in self._cliffs + self._plateau_tops:
-            pygame.draw.polygon(self.ground, color, pts)
-        self.ground.blit(self.shadows_high, (0, 0))
+        self.crossing_lights = []  # (x, y na obrazovce, pořadí blikání)
+        for px_, py_, _ in world.CROSSING_POSTS:
+            for i, ox in enumerate((-0.09, 0.09)):
+                sx, sy = P(px_ + ox, py_ + 0.07, 0.78)
+                self.crossing_lights.append((sx, sy, i))
 
     # =====================================================================
     # Zem (všechno ploché) – nakreslí se jednou do self.ground
     # =====================================================================
     def _build_ground(self):
         g = self.ground
-        shadows_low = pygame.Surface((settings.WIDTH, settings.HEIGHT), pygame.SRCALPHA)
-        self.shadows_high = pygame.Surface((settings.WIDTH, settings.HEIGHT), pygame.SRCALPHA)
-        self.shadows_low = shadows_low
+        size = g.get_size()
+        self.shadows_low = pygame.Surface(size, pygame.SRCALPHA)
+        self.shadows_high = pygame.Surface(size, pygame.SRCALPHA)
+        u = iso.px(1)  # jeden logický pixel ve skutečných (2× zvětšených) pixelech
 
         # 1) tráva dole: každé políčko jeden ze tří odstínů zelené
-        for r in range(-6, 20):
-            for c in range(-6, 24):
+        # (mapa je větší než obrazovka, aby vyplnila i široké monitory)
+        for r in range(-8, 22):
+            for c in range(-12, 30):
                 if not world.is_plateau(c, r):
                     pygame.draw.polygon(g, self.rng.choice(GRASS), quad(c, r, c + 1, r + 1, 0))
 
@@ -186,11 +216,11 @@ class Scenery:
             sx, sy = P(x, y)
             t = self.rng.random()
             if t < 0.62:
-                pygame.draw.polygon(g, (111, 174, 61), [(sx - 4, sy), (sx - 2, sy - 6), (sx, sy - 1), (sx + 2, sy - 7),
-                                                         (sx + 3, sy - 1), (sx + 5, sy - 4), (sx + 5, sy)])
+                blades = [(-4, 0), (-2, -6), (0, -1), (2, -7), (3, -1), (5, -4), (5, 0)]
+                pygame.draw.polygon(g, (111, 174, 61), [(sx + bx * u, sy + by * u) for bx, by in blades])
             else:
                 color = (255, 255, 255) if t < 0.77 else (255, 216, 74) if t < 0.9 else (242, 155, 181)
-                pygame.draw.polygon(g, color, [(sx, sy - 2), (sx + 2, sy), (sx, sy + 2), (sx - 2, sy)])
+                pygame.draw.polygon(g, color, [(sx, sy - 2 * u), (sx + 2 * u, sy), (sx, sy + 2 * u), (sx - 2 * u, sy)])
 
         # 3) pole: pšenice (jen hlína, klasy jsou objekty) a oranice s brázdami
         # pole je rozdělené silnicí na dvě poloviny
@@ -208,10 +238,10 @@ class Scenery:
         rx, ry, rh = world.ROAD_X, world.ROAD_Y, world.ROAD_HALF
         for half, color in ((rh + 0.07, (156, 116, 74)), (rh, (194, 154, 102))):
             pygame.draw.polygon(g, color, quad(rx - half, 2.5, rx + half, ry + half))
-            pygame.draw.polygon(g, color, quad(-6, ry - half, 24, ry + half))
+            pygame.draw.polygon(g, color, quad(-12, ry - half, 30, ry + half))
         for a, b in ((-0.22, -0.15), (0.15, 0.22)):
             pygame.draw.polygon(g, (212, 175, 124), quad(rx + a, 2.7, rx + b, ry - 0.3))
-            pygame.draw.polygon(g, (212, 175, 124), quad(-6, ry + a, 24, ry + b))
+            pygame.draw.polygon(g, (212, 175, 124), quad(-12, ry + a, 30, ry + b))
 
         # 5) koleje: štěrk, pražce, kolejnice (hlavní trať, vedlejší kolej, trať dole)
         for path in (track.PATH, world.SIDING, world.MAINLINE):
@@ -232,8 +262,8 @@ class Scenery:
         # 8) skalní plošina vzadu: stěny (kámen, hlína, tráva nahoře) a pak travnatý vršek
         bands = [(0, 0.35, "#8A8E95", "#6F737A"), (0.35, 0.82, "#A0704A", "#835B3B"), (0.82, 1.0, "#79B544", "#679C38")]
         self._cliffs = []
-        for r in range(-6, 20):
-            for c in range(-6, 24):
+        for r in range(-8, 22):
+            for c in range(-12, 30):
                 if not world.is_plateau(c, r):
                     continue
                 # přední stěna je vidět jen tam, kde je před plošinou nižší zem
@@ -245,7 +275,7 @@ class Scenery:
                     for z0, z1, _, left in bands:
                         self._cliffs.append((left, face_left(c, r, r + 1, z0, z1)))
         self._plateau_tops = [(self.rng.choice(GRASS), quad(c, r, c + 1, r + 1, 1))
-                              for r in range(-6, 20) for c in range(-6, 24) if world.is_plateau(c, r)]
+                              for r in range(-8, 22) for c in range(-12, 30) if world.is_plateau(c, r)]
 
     def _draw_track(self, surface, path):
         """Štěrkové lože a pražce jedné trati (bez kolejnic)."""
@@ -271,18 +301,18 @@ class Scenery:
 
     def _draw_rails(self, surface, path):
         """Dvě kolejnice (světlá čára + tmavý stín pod ní)."""
+        width = max(1, round(iso.px(2)))  # 2 logické pixely
         for side in (0.17, -0.17):
             line = offset_line(path, side, 0.06)
-            pygame.draw.lines(surface, settings.RAIL_SHADOW, False, [(x, y + 1.5) for x, y in line], 2)
-            pygame.draw.lines(surface, settings.RAIL, False, line, 2)
+            pygame.draw.lines(surface, settings.RAIL_SHADOW, False, [(x, y + iso.px(1.5)) for x, y in line], width)
+            pygame.draw.lines(surface, settings.RAIL, False, line, width)
 
     # =====================================================================
     # Vysoké objekty – každý do vlastního malého obrázku
     # =====================================================================
     def _add(self, depth_x, depth_y, shapes):
         """Předkreslí objekt a uloží ho s hloubkou jeho "středu" pro řazení."""
-        image, pos = bake(shapes)
-        self.objects.append((iso.depth(depth_x, depth_y), image, pos))
+        self.objects.append((iso.depth(depth_x, depth_y),) + shrink(*bake(shapes)))
 
     def _shadow(self, x0, y0, x1, y1, z=0.0):
         """Stín na zemi vpravo od objektu (poloprůhledný)."""
@@ -507,7 +537,6 @@ class Scenery:
     # =====================================================================
     def _build_crossing(self):
         self.crossing = {"up": [], "down": []}
-        self.crossing_lights = []  # (hloubka, x, y na obrazovce, pořadí blikání)
         for px, py, direction in world.CROSSING_POSTS:
             for state in ("up", "down"):
                 shapes = box(px - 0.05, py - 0.05, 0.1, 0.1, 0, 1.15, tri("#E9ECEF"))
@@ -526,11 +555,7 @@ class Scenery:
                     else:  # svisle nahoru
                         bx = px + direction * 0.08
                         shapes += box(bx - 0.035, py - 0.03, 0.07, 0.06, 0.62 + i * 1.1 / 6, 1.1 / 6, (color, shade(color, 0.84), shade(color, 0.7)))
-                image, pos = bake(shapes)
-                self.crossing[state].append((iso.depth(px, py), image, pos))
-            for i, ox in enumerate((-0.09, 0.09)):
-                sx, sy = P(px + ox, py + 0.07, 0.78)
-                self.crossing_lights.append((iso.depth(px, py) + 0.001, sx, sy, i))
+                self.crossing[state].append((iso.depth(px, py),) + shrink(*bake(shapes)))
 
     # =====================================================================
     # Každý snímek
@@ -559,18 +584,19 @@ class Scenery:
 
         # 3) blikající světla přejezdu (střídavě levé a pravé), když jede vlna
         blink = int(self.time * 3) % 2
-        for _, sx, sy, order in self.crossing_lights:
+        radius = max(2, round(iso.px(3)))
+        for sx, sy, order in self.crossing_lights:
             on = busy and order == blink
-            pygame.draw.circle(screen, (255, 59, 48) if on else (74, 26, 26), (sx, sy), 3)
+            pygame.draw.circle(screen, (255, 59, 48) if on else (74, 26, 26), (sx, sy), radius)
 
         # 4) dráty trolejového vedení nad vším a cedule Kolín
         for wire in self.wires:
-            pygame.draw.lines(screen, (58, 63, 71), False, wire, 1)
+            pygame.draw.aalines(screen, (58, 63, 71), False, wire)
         self._sign(screen, "Kolín", P(1.4, 2.25, 2.1))
 
     def _sign(self, screen, text, at):
         """Modrá cedule s bílým nápisem (název stanice)."""
         label = self.font.render(text, True, settings.WHITE)
         rect = label.get_rect(midbottom=(at[0], at[1]))
-        pygame.draw.rect(screen, settings.CD_BLUE, rect.inflate(16, 8))
+        pygame.draw.rect(screen, settings.CD_BLUE, rect.inflate(iso.px(16), iso.px(8)))
         screen.blit(label, rect)

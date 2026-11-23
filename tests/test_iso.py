@@ -50,3 +50,23 @@ def test_there_are_enough_build_spots_next_to_the_track():
 def test_map_is_always_the_same():
     # pevný seed: stromy a keře jsou při každém spuštění na stejném místě
     assert world.DECOR == world._scatter()
+
+
+def test_scaled_screen_still_round_trips():
+    # na velkém monitoru se vše zvětší a posune; převod tam a zpátky musí pořád sedět
+    saved = (settings.SCALE, settings.OFFSET_X, settings.OFFSET_Y)
+    settings.SCALE, settings.OFFSET_X, settings.OFFSET_Y = 1.6875, 150, 0  # jako Full HD 1920 × 1080
+    try:
+        sx, sy = iso.to_screen(4.5, 6.5)
+        assert iso.to_tile(sx, sy) == (4, 6)
+        assert iso.to_logical(4.5, 6.5) == iso.to_logical(4.5, 6.5)  # logické souřadnice na zvětšení nezávisí
+        assert iso.px(10) == 16.875
+    finally:
+        settings.SCALE, settings.OFFSET_X, settings.OFFSET_Y = saved
+
+
+def test_supersample_restores_the_scale():
+    before = settings.SCALE
+    with iso.supersample(2):
+        assert settings.SCALE == before * 2
+    assert settings.SCALE == before

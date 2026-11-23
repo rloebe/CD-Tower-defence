@@ -73,6 +73,8 @@ def in_rect(x, y, margin=0.0):
     return any(r[0] - margin < x < r[2] + margin and r[1] - margin < y < r[3] + margin for r in RECTS)
 
 
+# Pozor: kontroly "je to vidět na obrazovce" a "není to pod panelem" se dělají
+# v logických pixelech (iso.to_logical), takže nezáleží na velikosti monitoru.
 def under_picker(sx, sy):
     px, py, pw, ph = settings.PICKER_RECT
     return px - 16 <= sx <= px + pw + 16 and sy >= py - 12
@@ -110,7 +112,7 @@ def _scatter():
             return False
         if on_road(x, y, r + 0.1) or in_rect(x, y, r):
             return False
-        sx, sy = iso.to_screen(x, y)
+        sx, sy = iso.to_logical(x, y)
         if sx < 10 or sx > 950 or sy < 70 or sy > 650 or under_picker(sx, sy):
             return False
         return all(((x - q[0]) ** 2 + (y - q[1]) ** 2) ** 0.5 > q[2] + r + 0.15 for q in placed)
@@ -152,7 +154,7 @@ def _buildable():
                 continue
             if on_road(cx, cy, 0.3) or in_rect(cx, cy, 0.2):
                 continue
-            sx, sy = iso.to_screen(cx, cy)
+            sx, sy = iso.to_logical(cx, cy)
             if sx < 24 or sx > 936 or sy < 90 or sy > 622 or under_picker(sx, sy):
                 continue
             tiles.add((col, row))

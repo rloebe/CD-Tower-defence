@@ -16,6 +16,8 @@ import math
 
 import pygame
 
+import settings
+
 # poloprůhledný stín pod postavičkou (R, G, B, průhlednost)
 SHADOW = (0, 0, 0, 56)
 
@@ -189,18 +191,24 @@ def _offsets(phase, action):
     }
 
 
+# Postavičky kreslíme 2× větší a pak je plynule zmenšíme – tím se hrany
+# vyhladí (antialiasing), protože pygame jinak kreslí mnohoúhelníky "zubatě".
+SUPERSAMPLE = 2
+
+
 def draw_sprite(surface, kind, center, size, phase=0.0, action=0.0, flip=False):
     """Nakreslí postavičku.
 
     surface = kam kreslit (obrazovka)
     kind    = "cow" | "signal" | "tree" | "closure" | "worker" | "draisine" | "dispatcher"
-    center  = střed postavičky na obrazovce v pixelech (x, y)
-    size    = velikost postavičky v pixelech (odpovídá rozsahu -30..30)
+    center  = střed postavičky na obrazovce ve skutečných pixelech (x, y), např. z iso.to_screen
+    size    = velikost postavičky v logických pixelech (návrh 960 × 640); zvětší se o settings.SCALE
     phase   = čas animace v sekundách
     action  = 0–1, jak moc právě pracuje (věže při střele)
     flip    = True = zrcadlově otočit (nepřítel jede doleva)
     """
-    scale = size / 60  # kolik pixelů je jedna "malá" jednotka
+    real_size = size * settings.SCALE  # velikost na skutečné obrazovce
+    scale = real_size * SUPERSAMPLE / 60  # kolik pixelů (ve 2× větším obrázku) je jedna "malá" jednotka
     side = int(_HALF * 2 * scale) + 2
     # Kreslíme nejdřív do vlastního průhledného obrázku (SRCALPHA), protože
     # jen tak jde stín kreslit poloprůhledně a celou postavičku zrcadlově otočit.
@@ -221,6 +229,9 @@ def draw_sprite(surface, kind, center, size, phase=0.0, action=0.0, flip=False):
         pixels = [((x + dx + _HALF) * scale, (y + dy + _HALF) * scale) for x, y in points]
         pygame.draw.polygon(image, color, pixels)
 
+    # plynulé zmenšení na skutečnou velikost = vyhlazené hrany
+    final_side = max(1, round(side / SUPERSAMPLE))
+    image = pygame.transform.smoothscale(image, (final_side, final_side))
     if flip:
         image = pygame.transform.flip(image, True, False)
-    surface.blit(image, (center[0] - side / 2, center[1] - side / 2))
+    surface.blit(image, (center[0] - final_side / 2, center[1] - final_side / 2))
