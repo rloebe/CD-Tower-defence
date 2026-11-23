@@ -1,6 +1,3 @@
-# Corrections log: Matěj
+# Deník selhání AI – Matěj
 
-Every time AI-written code was wrong, didn't work, or wasn't what we wanted, and we changed it, it gets one row here. Newest at the bottom.
-
-| Date | File / feature | What the AI produced | What was wrong | How it was fixed | Fixed by |
-|---|---|---|---|---|---|
+Zápis každého případu, kdy AI udělala něco špatně a já to musel opravit. Podle zadání alespoň 3 případy. Jen skutečné případy, nejnovější dole.
