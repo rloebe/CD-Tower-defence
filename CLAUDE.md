@@ -47,7 +47,7 @@ Run `git fetch` and look at the remote branches and `main` (log + files) so you 
 
 | Area | Owner | Files |
 |---|---|---|
-| Game core: loop, states, map/track, enemies, waves | Robin | `src/main.py`, `src/game.py`, `src/settings.py`, `src/map.py`, `src/enemies.py`, `src/waves.py` |
+| Game core: loop, states, map/track, enemies, waves | Robin | `src/main.py`, `src/game.py`, `src/settings.py`, `src/track.py`, `src/enemies.py`, `src/waves.py` |
 | Tests, README, test scenario | Robin | `tests/`, `README.md`, `docs/testovaci-scenar.md` |
 | Towers, shooting, buying/placing, money spending | Matěj | `src/towers.py` |
 | Menu, HUD, end screens, buttons | Matěj | `src/ui.py` |
@@ -59,11 +59,15 @@ Don't edit the other person's files. If you need a change there (e.g. a new attr
 ### Interface between core and towers/UI
 
 `src/main.py` calls these. Keep their signatures so the two halves stay compatible:
-- `towers.TowerManager()` with `handle_event(event, game)`, `update(dt, game)`, `draw(surface, game)`
+- `towers.TowerManager()` with `reset()`, `handle_event(event, game)`, `update(dt, game)`, `draw(surface, game)`. `handle_event` only receives events that `ui.handle_event` didn't turn into an action.
 - `ui.handle_event(event, game)` returns `"start"`, `"restart"`, `"next_wave"`, `"quit"` or `None`
 - `ui.draw_menu(surface)`, `ui.draw_hud(surface, game)`, `ui.draw_end_screen(surface, game)`
 
-The game state (`src/game.py`, class `Game`) exposes: `state` (`"menu" | "playing" | "won" | "lost"`), `money`, `delay`, `max_delay`, `enemies`, `waves` (WaveManager), `path` (list of points), `tower_manager`, and helpers `map.is_on_path(pos, path, margin)`, `enemy.take_damage(amount)`, `enemy.progress` (distance along the track, for targeting the furthest enemy).
+Useful for towers (`src/game.py`, `src/track.py`, `src/enemies.py`):
+- `game.state` (`"menu" | "playing" | "won" | "lost"`), `game.money` (spend it when building), `game.delay`, `game.max_delay`, `game.enemies`, `game.waves` (`.current`, `.total`), `game.wave_in_progress`, `game.path`, `game.kills`
+- `track.is_on_path(pos, path, margin)` to block building on the track; `settings.HUD_HEIGHT` for the top bar
+- `enemy.pos`, `enemy.radius`, `enemy.progress` (distance along the track: target the highest one), `enemy.alive`, `enemy.take_damage(amount)`, `enemy.apply_slow(factor, duration)`
+- `game.py` gives the reward and counts the kill when `enemy.alive` turns False, so towers only call `take_damage`.
 
 ## Workflow: plan, branch, build, fix, merge
 
