@@ -15,3 +15,10 @@ Zápis každého případu, kdy AI udělala něco špatně a já to musel opravi
 - **Co AI udělala špatně:** Pořád se mě ptala a dávala mi dlouhé návody, místo aby pokračovala v práci.
 - **Jak jsem to poznal:** Zdržovalo mě to a nestíhal jsem.
 - **Jak jsem to opravil:** Napsal jsem jí, ať přestane a pokračuje („everything GOOD move on“).
+
+## Případ 3: AI mi nemohla stáhnout projekt do počítače (23. 11. 2026)
+
+- **Co jsem chtěl:** Aby mi AI stáhla projekt z GitHubu rovnou do počítače, abych mohl sloučit své větve do `main`.
+- **Co AI udělala špatně:** Nemohla to udělat – chat nebyl připojený k mému počítači, takže soubory tam dát neuměla. Předtím mi poslala jen zip, který byl jen kopie souborů bez gitu, a příkazy `git merge` v něm hlásily `not a git repository`.
+- **Jak jsem to poznal:** Příkazy v terminálu skončily chybou a AI mi pak napsala, že soubory do mého počítače dát nemůže.
+- **Jak jsem to opravil:** Stáhl jsem projekt sám příkazem `git clone` do nové složky `Delay-git` a sloučení i `git push` jsem udělal tam.
