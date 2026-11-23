@@ -564,23 +564,31 @@ class Scenery:
         """Posune vlastní hodiny scény (pro blikání a později okolní život)."""
         self.time += dt
 
-    def draw(self, screen, game):
-        """Nakreslí celou mapu a nepřátele ve správném pořadí podle hloubky."""
+    def draw(self, screen, game, extra=()):
+        """Nakreslí celou mapu a nepřátele ve správném pořadí podle hloubky.
+
+        extra = další věci, které se mají zařadit podle hloubky (okolní život z ambient.py):
+                seznam dvojic (hloubka, funkce), kde funkce(screen) danou věc nakreslí.
+        """
         # 1) celá předkreslená zem jedním nalepením (rychlé)
         screen.blit(self.ground, (0, 0))
 
-        # 2) vše vysoké + nepřátelé, seřazené odzadu dopředu
+        # 2) vše vysoké + nepřátelé (+ okolní život), seřazené odzadu dopředu
         busy = game.state == "playing" and game.wave_in_progress
         items = [(d, 0, img, pos) for d, img, pos in self.objects]
         items += [(d, 0, img, pos) for d, img, pos in self.crossing["down" if busy else "up"]]
         for enemy in game.enemies:
             items.append((iso.depth(enemy.x, enemy.y), 1, enemy, None))
+        for depth, draw_function in extra:
+            items.append((depth, 2, draw_function, None))
         items.sort(key=lambda item: (item[0], item[1]))
         for _, kind, thing, pos in items:
             if kind == 0:
-                screen.blit(thing, pos)
+                screen.blit(thing, pos)  # předkreslený objekt mapy
+            elif kind == 1:
+                thing.draw(screen)  # nepřítel
             else:
-                thing.draw(screen)
+                thing(screen)  # věc z okolního života
 
         # 3) blikající světla přejezdu (střídavě levé a pravé), když jede vlna
         blink = int(self.time * 3) % 2

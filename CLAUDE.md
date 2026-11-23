@@ -61,11 +61,12 @@ Never commit under the other student's identity.
 
 | Area | Owner | Files |
 |---|---|---|
-| Game core: loop, game states, world/projection, map layout and drawing, track, enemies, waves, ambient life | Robin | `src/main.py`, `src/game.py`, `src/settings.py`, `src/iso.py`, `src/world.py`, `src/scenery.py`, `src/track.py`, `src/enemies.py`, `src/waves.py` |
+| Game core: loop, game states, world/projection, map layout and drawing, track, enemies, waves | Robin | `src/main.py`, `src/game.py`, `src/settings.py`, `src/iso.py`, `src/world.py`, `src/scenery.py`, `src/track.py`, `src/enemies.py`, `src/waves.py` |
 | Character drawing + animation for all 7 sprites (ported from `docs/design-prototyp/Sprite.dc.html`) | Robin | `src/sprites.py` |
 | All screens and UI: loading screen, menu, HUD, tower picker, build-spot highlight, ghost tower under the mouse, station delay panel, coin popups, end screen | Robin (Matěj can take it back if he starts before Robin gets to it) | `src/ui.py` |
 | Tests, README, test scenario | Robin | `tests/`, `README.md`, `docs/testovaci-scenar.md` |
 | **Towers: types, building with the mouse, shooting, slowing, spending money** | **Matěj** | `src/towers.py` |
+| **Ambient life: passing trains on the bottom line, cars, tractor, grazing cows, chimney smoke** | **Matěj** | `src/ambient.py` |
 | Design doc | both | `docs/design-dokument.md`, `docs/vizualni-design.md` |
 | Own diary + retrospective | each | `CORRECTIONS-<name>.md`, `RETROSPEKTIVA-<name>.md` |
 
@@ -77,7 +78,7 @@ Don't edit the other person's files. If you need a change there, tell your stude
 2. **Matěj, as soon as he starts:** `src/towers.py` on top of `main` (after `robin/iso-core` is merged). Everything he needs is in the interface below. The tower sprites already exist in `sprites.py` (`"worker"`, `"draisine"`, `"dispatcher"`), so towers only need logic + calling `draw_sprite`.
 3. Merge both, test together with `docs/testovaci-scenar.md`, fix bugs (each fix → diary entry).
 4. Diaries (3+ real cases each), retrospectives, final README check, run it on another PC.
-5. Only if time is left: ambient life (passing trains, cars, tractor, smoke).
+5. **Matěj, after the towers:** ambient life in `src/ambient.py`, exactly as described in `docs/vizualni-design.md` (section "Okolní život") – the same behaviour as in the design prototype.
 
 ## Interface between core and towers/UI
 
@@ -102,6 +103,13 @@ Towers (what `towers.py` must provide and use):
 - `TowerManager.towers`: list of built towers; each tower has `col`, `row` (tile) and `kind`. `ui.py` reads them to show ranges and hide occupied build spots.
 - Building: on a left click that `ui.handle_event` returned `None` for, take the tile from `iso.to_tile(*event.pos)`, check `track.can_build(col, row)`, that the tile is free and `game.money >= price`, then subtract the price.
 - Drawing: `sprites.draw_sprite(surface, tower.kind, (sx, sy - iso.px(54) * 16 / 60), 54, phase=game.time, action=...)` where `(sx, sy) = iso.to_screen(col + 0.5, row + 0.5)`. `action` 0–1 = how much it's "working" right after a shot (worker swings, dispatcher raises the paddle).
+
+Ambient life (`src/ambient.py`, Matěj) – `main.py` already loads it automatically when the file exists:
+- `ambient.Ambient()` – created after the screen is set up (sizes are known).
+- `update(dt)` – called every frame, always (loading, menu, game, pause); `dt` in seconds.
+- `drawables()` – returns a list of `(depth, draw_function)`; `scenery.draw` sorts them together with map objects and enemies, so a train is correctly hidden behind a house. `depth = iso.depth(x, y)` of the object's centre; `draw_function(surface)` draws it.
+- `draw_overlay(surface)` – things above everything on the map (chimney smoke).
+- Use `iso.to_screen` for positions and `iso.px` for pixel sizes; reuse `scenery.box`, `scenery.tri` and `sprites.draw_sprite` (cows) instead of copying them. For speed, pre-draw each vehicle once (like `scenery.bake`) and only move it.
 
 Game state (`src/game.py`, class `Game`):
 - `state`: `"loading" | "menu" | "playing" | "won" | "lost"`; `load_progress` 0–1 while loading
