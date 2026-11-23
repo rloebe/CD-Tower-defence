@@ -88,9 +88,20 @@ World coordinates are in **tiles** (floats), not pixels. Only drawing converts t
 
 `src/main.py` calls these. Keep the signatures so the two halves stay compatible:
 - `towers.TowerManager()` with `reset()`, `handle_event(event, game)`, `update(dt, game)`, `draw(surface, game)`. `handle_event` only receives events that `ui.handle_event` didn't turn into an action.
-- `ui.handle_event(event, game)` returns `"start"`, `"restart"`, `"menu"`, `"next_wave"`, `"pause"`, `"speed"`, `"skip_loading"`, `"quit"` or `None`
-- `ui.draw_loading(surface, game)`, `ui.draw_menu(surface, game)`, `ui.draw_hud(surface, game)`, `ui.draw_end_screen(surface, game)`
-- `sprites.draw_sprite(surface, kind, center, size, phase=0.0, action=0.0, flip=False)` where `kind` is `"cow" | "signal" | "tree" | "closure" | "worker" | "draisine" | "dispatcher"`
+- `ui.handle_event(event, game)` returns `"start"`, `"restart"`, `"menu"`, `"next_wave"`, `"pause"`, `"speed"`, `"skip_loading"`, `"quit"`, `"ui"` (handled by the UI itself, e.g. a click on the picker; ignore it) or `None` (the event belongs to the towers, e.g. a click on grass = build)
+- `ui.draw(surface, game)` draws the right screen for the game state (it calls `draw_loading`, `draw_menu`, `draw_hud`, `draw_end_screen`)
+- `sprites.draw_sprite(surface, kind, center, size, phase=0.0, action=0.0, flip=False)` where `kind` is `"cow" | "signal" | "tree" | "closure" | "worker" | "draisine" | "dispatcher"`; `center` in real screen pixels (from `iso.to_screen`), `size` in logical pixels
+
+Screen and sizes:
+- The game runs **fullscreen** at the monitor's resolution (`python src/main.py --okno` = 960 × 640 window for debugging). Everything is designed for a logical 960 × 640 area, scaled by `settings.SCALE` and centred by `settings.OFFSET_X/Y`.
+- Positions on screen always come from `iso.to_screen(...)` (already scaled). Pixel sizes you choose yourself (line widths, sprite size, offsets) are logical: convert with `iso.px(value)`.
+
+Towers (what `towers.py` must provide and use):
+- Tower stats are shared in `settings.TOWER_TYPES` (`name`, `price`, `range` in tiles, `damage`, `rate` in seconds, `slow`, `slow_time`) and `settings.TOWER_ORDER`. The picker in `ui.py` shows them; `towers.py` uses the same values.
+- `game.selected_tower`: which tower the player picked in the picker (`"worker" | "draisine" | "dispatcher"`), set by `ui.py`. Build that one on click.
+- `TowerManager.towers`: list of built towers; each tower has `col`, `row` (tile) and `kind`. `ui.py` reads them to show ranges and hide occupied build spots.
+- Building: on a left click that `ui.handle_event` returned `None` for, take the tile from `iso.to_tile(*event.pos)`, check `track.can_build(col, row)`, that the tile is free and `game.money >= price`, then subtract the price.
+- Drawing: `sprites.draw_sprite(surface, tower.kind, (sx, sy - iso.px(54) * 16 / 60), 54, phase=game.time, action=...)` where `(sx, sy) = iso.to_screen(col + 0.5, row + 0.5)`. `action` 0–1 = how much it's "working" right after a shot (worker swings, dispatcher raises the paddle).
 
 Game state (`src/game.py`, class `Game`):
 - `state`: `"loading" | "menu" | "playing" | "won" | "lost"`; `load_progress` 0–1 while loading
@@ -105,7 +116,7 @@ Game state (`src/game.py`, class `Game`):
 
 1. **Plan first.** Before writing code for a feature, agree the plan with the student. Ask clarifying questions and confirm your understanding before building. Flag tradeoffs honestly and push back when something is a bad idea.
 2. **Branch.** Never commit to `main`. Branch from an up-to-date `main`, named `<firstname>/<short-feature>` (e.g. `matej/ui`).
-3. **Build and push the branch.** Commit in small, meaningful steps and push the branch.
+3. **Build and push the branch.** One commit per bigger change (see Commits), then push the branch.
 4. **Test and fix.** The student runs it. Fixes happen on the same branch.
 5. **Merge into `main`.** The student does this themself in the terminal:
    ```
@@ -121,6 +132,7 @@ Game state (`src/game.py`, class `Game`):
 
 - Author is the student you're working for (their name and noreply email from the table above). Committer is Claude.
 - Keep the `Co-Authored-By: Claude ...` line at the end of every commit message. Don't remove it.
+- **One commit per bigger, meaningful change** (a feature, a screen, a fix of a real problem). No separate commits for tiny tweaks like a colour change; group them with the change they belong to. Never rewrite history that is already on `main`.
 - Example:
   ```
   GIT_AUTHOR_NAME="Robin Loebe" GIT_AUTHOR_EMAIL="194109139+rloebe@users.noreply.github.com" \
