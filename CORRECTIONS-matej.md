@@ -8,3 +8,17 @@ Zápis každého případu, kdy AI udělala něco špatně a já to musel opravi
 - **Co AI udělala špatně:** Poslala mi zip, ve kterém byla hra ještě jednou zabalená ve složce. Po „Extrahovat vše“ ve Windows tak vznikla složka ve složce (`CD-Tower-defence\CD-Tower-defence`). AI mi napsala, ať otevřu „složku CD-Tower-defence“, ale neupozornila, že jsou dvě a že soubory hry jsou až ve vnitřní.
 - **Jak jsem to poznal:** Když jsem (po instalaci Pythonu) spustil instalaci knihoven, terminál napsal chybu `No such file or directory: 'requirements.txt'`. AI podle snímku obrazovky poznala, že jsem ve vnější složce.
 - **Jak jsem to opravil:** Příkazem `cd CD-Tower-defence` jsem přešel do vnitřní složky a pak `py -m pip install -r requirements.txt` a `py src/main.py --okno` fungovaly.
+
+## Případ 2: Moc otázek a dlouhých návodů místo práce (23. 11. 2026)
+
+- **Co jsem chtěl:** Rychle dokončit projekt před termínem.
+- **Co AI udělala špatně:** Pořád se mě ptala a dávala mi dlouhé návody, místo aby pokračovala v práci.
+- **Jak jsem to poznal:** Zdržovalo mě to a nestíhal jsem.
+- **Jak jsem to opravil:** Napsal jsem jí, ať přestane a pokračuje („everything GOOD move on“).
+
+## Případ 3: AI mi nemohla stáhnout projekt do počítače (23. 11. 2026)
+
+- **Co jsem chtěl:** Aby mi AI stáhla projekt z GitHubu rovnou do počítače, abych mohl sloučit své větve do `main`.
+- **Co AI udělala špatně:** Nemohla to udělat – chat nebyl připojený k mému počítači, takže soubory tam dát neuměla. Předtím mi poslala jen zip, který byl jen kopie souborů bez gitu, a příkazy `git merge` v něm hlásily `not a git repository`.
+- **Jak jsem to poznal:** Příkazy v terminálu skončily chybou a AI mi pak napsala, že soubory do mého počítače dát nemůže.
+- **Jak jsem to opravil:** Stáhl jsem projekt sám příkazem `git clone` do nové složky `Delay-git` a sloučení i `git push` jsem udělal tam.
