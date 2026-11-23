@@ -1,8 +1,12 @@
-# Corrections log: <your first name>
+# Deník selhání AI – <jméno>
 
-(Copy this file to `CORRECTIONS-<your first name>.md`, e.g. `CORRECTIONS-tom.md`, and delete this line and the template filename.)
+(Zkopíruj tento soubor jako `CORRECTIONS-<jméno>.md` a tento řádek smaž.)
 
-Every time AI-written code was wrong, didn't work, or wasn't what we wanted, and we changed it, it gets one row here. Newest at the bottom.
+Zápis každého případu, kdy AI udělala něco špatně a já to musel opravit. Podle zadání alespoň 3 případy. Jen skutečné případy, nejnovější dole.
 
-| Date | File / feature | What the AI produced | What was wrong | How it was fixed | Fixed by |
-|---|---|---|---|---|---|
+## Případ 1: <krátký název> (<datum>)
+
+- **Co jsem chtěl:**
+- **Co AI udělala špatně:**
+- **Jak jsem to poznal:**
+- **Jak jsem to opravil:**
