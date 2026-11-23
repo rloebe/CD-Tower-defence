@@ -2,9 +2,9 @@
 
 import pygame
 
+import scenery
 import settings
 import towers
-import track
 import ui
 from game import Game
 
@@ -15,6 +15,7 @@ def main():
     pygame.display.set_caption(settings.TITLE)
     clock = pygame.time.Clock()
 
+    scene = scenery.Scenery()  # mapa se vykreslí jen jednou, tady
     game = Game(towers.TowerManager())
     running = True
 
@@ -33,25 +34,34 @@ def main():
                 running = False
             elif action in ("start", "restart"):
                 game.start()
+            elif action == "menu":
+                game.go_to_menu()
             elif action == "next_wave":
                 game.start_next_wave()
-            elif game.state == "playing":
+            elif action == "pause":
+                game.toggle_pause()
+            elif action == "speed":
+                game.toggle_speed()
+            elif action == "skip_loading":
+                game.skip_loading()
+            elif action is None and game.state == "playing":
                 game.tower_manager.handle_event(event, game)
 
         # 2) logika
         game.update(dt)
+        scene.update(dt)
 
-        # 3) kreslení
-        if game.state == "menu":
-            ui.draw_menu(screen)
-        else:
-            track.draw_track(screen, game.path)
-            for enemy in game.enemies:
-                enemy.draw(screen)
+        # 3) kreslení: mapa je vidět vždy (i za načítáním a menu)
+        scene.draw(screen, game)
+        if game.state in ("playing", "won", "lost"):
             game.tower_manager.draw(screen, game)
             ui.draw_hud(screen, game)
-            if game.state in ("won", "lost"):
-                ui.draw_end_screen(screen, game)
+        if game.state == "loading":
+            ui.draw_loading(screen, game)
+        elif game.state == "menu":
+            ui.draw_menu(screen, game)
+        elif game.state in ("won", "lost"):
+            ui.draw_end_screen(screen, game)
 
         pygame.display.flip()
 

@@ -2,7 +2,7 @@
 
 from enemies import ENEMY_TYPES, Enemy
 
-STRAIGHT = [(0, 0), (100, 0)]  # rovná trať dlouhá 100 px
+STRAIGHT = [(0, 0), (10, 0)]  # rovná trať dlouhá 10 políček
 
 
 def test_enemy_moves_by_speed():
@@ -17,7 +17,7 @@ def test_enemy_reaches_end():
     for _ in range(100):
         enemy.update(0.1)
     assert enemy.reached_end
-    assert enemy.pos == (100, 0)
+    assert enemy.pos == (10, 0)
 
 
 def test_take_damage_and_die():
