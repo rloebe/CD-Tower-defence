@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<title>Styl a barvy – low poly</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+code{font-family: ui-monospace, Consolas, monospace; font-size: 13px; background: rgba(255,255,255,0.1); padding: 1px 4px}
+</style>
+</helmet>
+<div style="width: 2000px; height: 600px; box-sizing: border-box; padding: 36px 40px; background: #0F1F36; font-family: 'Exo 2', sans-serif; color: #FFFFFF; display: grid; grid-template-columns: 820px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); gap: 40px">
+
+<div style="display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font-size: 26px; font-weight: 800">Paleta</h2>
+<div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px">
+<sc-for list="{{swatches}}" as="sw" hint-placeholder-count="18">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<div style="height: 64px; background: {{sw.hex}}; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%)"></div>
+<span style="font-size: 13px; font-weight: 600">{{sw.name}}</span>
+<span style="font-size: 12px; color: #B9CBE0">{{sw.hex}}</span>
+</div>
+</sc-for>
+</div>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 26px; font-weight: 800">Písmo</h2>
+<span style="font-size: 14px; color: #B9CBE0">Exo 2 (Google Fonts, licence OFL)</span>
+<span style="font-size: 56px; font-weight: 800; line-height: 1">ZPOŽDĚNÍ</span>
+<span style="font-size: 24px; font-weight: 800">Nadpis 24 / ExtraBold</span>
+<span style="font-size: 18px; font-weight: 600">Text tlačítka 18 / SemiBold</span>
+<span style="font-size: 14px; font-weight: 400">Běžný text 14 / Regular</span>
+<span style="font-size: 18px; font-weight: 600; color: #FFD27A">ěščřžýáíéůú ĚŠČŘŽÝÁÍÉŮÚ</span>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 26px; font-weight: 800">Pravidla low poly</h2>
+<ol style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; font-size: 15px; line-height: 1.4">
+<li>Všechno je z rovných ploch: trojúhelníky a mnohoúhelníky. Žádné kruhy ani barevné přechody.</li>
+<li>Každý objekt má 2–3 odstíny jedné barvy. Světlo svítí zleva shora: světlá plocha vlevo nahoře, tmavá vpravo dole.</li>
+<li>Žádné černé obrysy, tvar dělá kontrast odstínů.</li>
+<li>Stín = tmavý poloprůhledný mnohoúhelník posunutý vpravo dolů.</li>
+<li>Panely tmavě modré se zkosenými rohy, hlavní tlačítko žluté s tmavým textem.</li>
+</ol>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 26px; font-weight: 800">Jak to dostat do pygame</h2>
+<ul style="margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; font-size: 15px; line-height: 1.4">
+<li>Každý tvar je <code>pygame.draw.polygon(surface, barva, body)</code>. Body spritů jsou v komponentě Sprite, stačí je posunout na pozici.</li>
+<li>Terén se vygeneruje jednou při startu do jedné <code>Surface</code> a pak se jen kreslí, takže hra nezpomalí.</li>
+<li>Stíny a panely: <code>Surface</code> s <code>SRCALPHA</code>.</li>
+<li>Písmo: soubor Exo 2 do <code>assets/fonts/</code>, načíst přes <code>pygame.font.Font(cesta, velikost)</code>.</li>
+<li>Kamera jako v Unrailed: shora pod 55°, pootočená o −12°. Bod (x, y, výška z) → obrazovka: <code>sx = 10 + 46·(0,978x + 0,208y)</code>, <code>sy = 168 + 46·((−0,208x + 0,978y)·0,819 − 0,574z)</code>. Logika hry zůstává ve 2D, převádí se jen při kreslení.</li>
+<li>Kostka = 3 mnohoúhelníky (vršek, přední bok, levý bok). Kreslit odzadu dopředu podle hloubky <code>−0,208x + 0,978y</code>.</li>
+<li>Klik myší → políčko: <code>a = (sx − 10) / 46</code>, <code>b = (sy − 168) / 46 / 0,819</code>, <code>x = 0,978a − 0,208b</code>, <code>y = 0,208a + 0,978b</code>.</li>
+</ul>
+</div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2000,"height":600}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      swatches: [
+        { name: 'ČD modrá', hex: '#00549F' },
+        { name: 'ČD modrá světlá', hex: '#0A62B3' },
+        { name: 'Tmavá modrá', hex: '#003A70' },
+        { name: 'Panel', hex: '#0A182C' },
+        { name: 'Signální žlutá', hex: '#FFB020' },
+        { name: 'Reflexní oranžová', hex: '#FF8A2A' },
+        { name: 'Tráva 1', hex: '#4A8239' },
+        { name: 'Tráva 2', hex: '#57943F' },
+        { name: 'Tráva 3', hex: '#64A548' },
+        { name: 'Tráva 4', hex: '#74B453' },
+        { name: 'Tráva 5', hex: '#86C362' },
+        { name: 'Jehličí', hex: '#2C6B3A' },
+        { name: 'Štěrk světlý', hex: '#978F83' },
+        { name: 'Štěrk tmavý', hex: '#776F65' },
+        { name: 'Pražce', hex: '#6B4B2E' },
+        { name: 'Kolejnice', hex: '#D2D5DC' },
+        { name: 'Cihla nádraží', hex: '#C8553D' },
+        { name: 'Zpoždění / chyba', hex: '#E0342F' },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>
