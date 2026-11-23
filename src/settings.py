@@ -5,7 +5,7 @@ WIDTH = 960
 HEIGHT = 640
 HUD_HEIGHT = 56  # horní lišta (rozpočet, zpoždění, vlna)
 FPS = 60
-TITLE = "Zpoždění – ČD Tower Defence"
+TITLE = "Výluka – ČD Tower Defence"
 
 # Pravidla
 START_MONEY = 150  # Kč na začátku hry

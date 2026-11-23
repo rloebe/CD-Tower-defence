@@ -1,4 +1,4 @@
-# Zpoždění – ČD Tower Defence
+# Výluka – ČD Tower Defence
 
 Školní projekt: hra žánru tower defence na téma České dráhy.
 

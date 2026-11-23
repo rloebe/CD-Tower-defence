@@ -1,4 +1,4 @@
-# Design dokument – Zpoždění
+# Design dokument – Výluka
 
 **Žánr:** Tower defence
 **Téma:** České dráhy
@@ -62,13 +62,14 @@ Věže se nesmí stavět na trať ani na sebe navzájem.
 
 ## 8. Obrazovky
 
-1. Hlavní menu
-2. Hra (mapa s tratí + horní lišta: rozpočet, zpoždění, číslo vlny)
-3. Konec hry (výhra / prohra)
+1. Načítání (název hry, malý ukazatel průběhu s vláčkem)
+2. Hlavní menu
+3. Hra (mapa s tratí, horní lišta: rozpočet, zpoždění, vlna, pauza, zrychlení; panel zpoždění nad Prahou; výběr věží)
+4. Konec hry (výhra / prohra)
 
 ## 9. Grafika a zvuk
 
-Grafika je kreslená přímo v kódu (tvary a text), žádné obrázky nejsou potřeba. Barvy inspirované ČD (modrá, bílá). Zvuk není v plánu.
+Low-poly / voxel styl (jako hra Unrailed), kamera shora pod úhlem. Vše je kreslené kódem z mnohoúhelníků, žádné obrázky. Barvy inspirované ČD (modrá, bílá, žlutá nádraží). Podrobně v `docs/vizualni-design.md`, hratelná předloha v `docs/design-prototyp/`. Zvuk není v plánu.
 
 ## 10. Rozsah
 
