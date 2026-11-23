@@ -35,8 +35,16 @@ The look is decided. Follow `docs/vizualni-design.md`: low-poly/voxel style like
 ## Language
 
 - Everything a player or the teacher reads is in **Czech**: in-game text, README, docs, diaries, retrospectives.
-- Code identifiers in English; short code comments in Czech.
+- Code identifiers in English; code comments in Czech.
 - Commit messages: short, in English.
+
+## Comments in the code (required)
+
+The defence is individual, so the code must explain itself. In every file you write or change:
+- A module docstring at the top: what the file is for and how it fits into the game.
+- A docstring for every class and function: what it does, what the parameters mean (with units: tiles, pixels, seconds) and what it returns.
+- A comment above every non-obvious block or line: **why** it's done this way, not just what it does (e.g. why we sort by depth, why `dt` is capped, why the map is pre-rendered).
+- Plain, simple Czech that a student can read out and explain. No clever one-liners without a comment.
 
 ## Who you are working for
 
@@ -53,24 +61,23 @@ Never commit under the other student's identity.
 
 | Area | Owner | Files |
 |---|---|---|
-| Game core: loop, game states, world/projection, map drawing, track, enemies, waves, ambient life | Robin | `src/main.py`, `src/game.py`, `src/settings.py`, `src/iso.py`, `src/track.py`, `src/enemies.py`, `src/waves.py` |
+| Game core: loop, game states, world/projection, map layout and drawing, track, enemies, waves, ambient life | Robin | `src/main.py`, `src/game.py`, `src/settings.py`, `src/iso.py`, `src/world.py`, `src/scenery.py`, `src/track.py`, `src/enemies.py`, `src/waves.py` |
+| Character drawing + animation for all 7 sprites (ported from `docs/design-prototyp/Sprite.dc.html`) | Robin | `src/sprites.py` |
+| All screens and UI: loading screen, menu, HUD, tower picker, build-spot highlight, ghost tower under the mouse, station delay panel, coin popups, end screen | Robin (Matěj can take it back if he starts before Robin gets to it) | `src/ui.py` |
 | Tests, README, test scenario | Robin | `tests/`, `README.md`, `docs/testovaci-scenar.md` |
-| Character drawing + animation for all 7 sprites (ported from `docs/design-prototyp/Sprite.dc.html`) | Matěj | `src/sprites.py` |
-| Towers: types, building with the mouse, shooting, slowing, spending money | Matěj | `src/towers.py` |
-| All screens and UI: loading screen, menu, HUD, tower picker, build-spot highlight, ghost tower under the mouse, station delay panel, coin popups, end screen | Matěj | `src/ui.py` |
+| **Towers: types, building with the mouse, shooting, slowing, spending money** | **Matěj** | `src/towers.py` |
 | Design doc | both | `docs/design-dokument.md`, `docs/vizualni-design.md` |
 | Own diary + retrospective | each | `CORRECTIONS-<name>.md`, `RETROSPEKTIVA-<name>.md` |
 
 Don't edit the other person's files. If you need a change there, tell your student so they can ask the other person, or keep it to a small, clearly described change.
 
-## Plan for 23 Nov evening (in this order)
+## Plan for 23 Nov evening (updated: Matěj starts later, so Robin took over sprites and UI)
 
-1. **Robin** merges `robin/core-game` into `main` (done before Matěj starts).
-2. **Matěj, first:** `src/sprites.py` and `src/ui.py`. These are screen drawing and don't depend on the world coordinates, so they can start right away. Then `src/towers.py`.
-3. **Robin, in parallel:** switch the core to the isometric world: `src/iso.py` with the projection, track and enemies in tile units (values in `docs/vizualni-design.md`), map drawing, new game states and fields listed below, tests updated.
-4. Merge both, test together with `docs/testovaci-scenar.md`, fix bugs (each fix → diary entry).
-5. Diaries (3+ real cases each), retrospectives, final README check, run it on another PC.
-6. Only if time is left: ambient life (passing trains, cars, tractor, smoke).
+1. **Robin:** the isometric core on `robin/iso-core`: `iso.py`, `world.py` (map layout, `BUILDABLE`), track and enemies in tiles, new game states and fields, `sprites.py`, temporary keyboard-only `ui.py`, tests. Then the full map drawing (`scenery.py`) and the full `ui.py`.
+2. **Matěj, as soon as he starts:** `src/towers.py` on top of `main` (after `robin/iso-core` is merged). Everything he needs is in the interface below. The tower sprites already exist in `sprites.py` (`"worker"`, `"draisine"`, `"dispatcher"`), so towers only need logic + calling `draw_sprite`.
+3. Merge both, test together with `docs/testovaci-scenar.md`, fix bugs (each fix → diary entry).
+4. Diaries (3+ real cases each), retrospectives, final README check, run it on another PC.
+5. Only if time is left: ambient life (passing trains, cars, tractor, smoke).
 
 ## Interface between core and towers/UI
 

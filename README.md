@@ -16,10 +16,13 @@ Podrobnosti najdeš v [design dokumentu](docs/design-dokument.md).
 
 | Klávesa / myš | Akce |
 |---|---|
+| **libovolná klávesa / klik** | přeskočit načítání |
 | **Enter** | začít hru (v menu) |
-| **Levé tlačítko myši** | postavit věž vedle trati |
+| **Levé tlačítko myši** | postavit věž na volnou trávu vedle trati |
 | **Mezerník** | spustit další vlnu |
-| **R** | nová hra (na konci hry) |
+| **P** | pauza |
+| **F** | zrychlení 2× |
+| **R** / **M** | na konci hry: hrát znovu / hlavní menu |
 | **Esc** | ukončit hru |
 
 ## Postup spuštění
@@ -67,7 +70,11 @@ Ruční testovací scénář je v [docs/testovaci-scenar.md](docs/testovaci-scen
 |---|---|
 | `src/main.py` | spuštění hry a hlavní smyčka |
 | `src/game.py` | stav hry a pravidla (peníze, zpoždění, výhra/prohra) |
-| `src/track.py` | trať a mapa |
+| `src/iso.py` | kamera: převod políček na pixely a zpět |
+| `src/world.py` | rozložení mapy (kde co stojí, kde se dá stavět) |
+| `src/scenery.py` | kreslení mapy |
+| `src/sprites.py` | postavičky a jejich animace |
+| `src/track.py` | trať, po které jedou nepřátelé |
 | `src/enemies.py` | nepřátelé |
 | `src/waves.py` | vlny nepřátel |
 | `src/towers.py` | věže |
