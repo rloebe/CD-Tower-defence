@@ -36,21 +36,23 @@ Každý problém, který do stanice dojede, přidá vlakům zpoždění. Když c
 
 ## 5. Věže (pracovníci a technika ČD)
 
-Navrhuje a programuje Matěj. Základní návrh (3 typy):
+Navrhuje a programuje Matěj (`src/towers.py`). Hodnoty jsou v `src/settings.py` (`TOWER_TYPES`), stejná čísla ukazuje i panel výběru věží.
 
-| Název | Role |
-|---|---|
-| Traťový dělník | levná základní věž, střílí na jeden cíl |
-| Pracovní drezína | dražší, větší dosah a poškození |
-| Výpravčí | zpomaluje problémy v dosahu |
+| Název | Cena | Dosah | Účinek | Jak často | Role |
+|---|---|---|---|---|---|
+| Traťový dělník | 50 Kč | 2,3 políčka | 10 poškození | 1× za 1 s | levná základní věž, střílí na jeden cíl |
+| Pracovní drezína | 120 Kč | 3,1 políčka | 25 poškození | 1× za 1,2 s | dražší, větší dosah a poškození |
+| Výpravčí | 80 Kč | 2,1 políčka | zpomalí na 50 % na 1,5 s | 1× za 1 s | nestřílí, zpomalí všechny v dosahu |
 
-Věže se nesmí stavět na trať ani na sebe navzájem.
+- Dělník a drezína míří na problém, který je nejdál po trati (nejblíž Praze), protože ten by nejdřív způsobil zpoždění.
+- Střela letí za cílem a ubere mu životy, až doletí. Když cíl mezitím zmizí, zmizí i střela.
+- Věž se staví kliknutím na volnou trávu: ne na trať, silnici, pole, budovy, plošinu ani na jinou věž. Cena se odečte z rozpočtu; když na věž nejsou peníze, nepostaví se.
 
 ## 6. Ekonomika
 
 - Startovní rozpočet: 150 Kč.
 - Peníze za každý odstraněný problém (viz tabulka nepřátel).
-- Ceny věží určí Matěj při vyvažování.
+- Ceny věží: dělník 50 Kč, výpravčí 80 Kč, drezína 120 Kč. Na začátku jdou koupit 3 dělníci, nebo dělník a výpravčí. Při zkušební simulaci celé hry šlo všech 8 vln vyhrát bez zpoždění se 13 věžemi.
 
 ## 7. Ovládání
 
@@ -85,6 +87,7 @@ Low-poly / voxel styl (jako hra Unrailed), kamera shora pod úhlem. Vše je kres
 | Nepřátelé, vlny | Robin |
 | Testy, testovací scénář, README | Robin |
 | Věže, střelba, stavění, utrácení peněz | Matěj |
-| Menu, horní lišta, obrazovka konce hry | Matěj |
+| Okolní život: vlaky, auta, traktor, krávy, kouř | Matěj |
+| Postavičky, menu, horní lišta, výběr věží, obrazovka konce hry | Robin (původně Matěj, převzal je Robin, protože Matěj začínal později) |
 | Design dokument | oba |
 | Deník selhání AI, retrospektiva | každý svůj |
