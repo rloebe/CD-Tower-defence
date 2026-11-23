@@ -65,6 +65,15 @@ def main():
 
     scene = scenery.Scenery()  # mapa se vykreslí jen jednou, tady
     game = Game(towers.TowerManager())
+
+    # Okolní život (projíždějící vlaky, auta, traktor, kouř) je v ambient.py (Matěj).
+    # Když soubor ještě neexistuje, hra prostě běží bez něj.
+    try:
+        import ambient
+
+        life = ambient.Ambient()
+    except ImportError:
+        life = None
     running = True
 
     while running:
@@ -100,10 +109,14 @@ def main():
         # 2) logika
         game.update(dt)
         scene.update(dt)
+        if life:
+            life.update(dt)  # běží pořád (i v menu a při pauze), je to jen dekorace
 
         # 3) kreslení: mapa je vidět vždy (i za načítáním a menu)
         screen.fill((0, 0, 0))
-        scene.draw(screen, game)
+        scene.draw(screen, game, extra=life.drawables() if life else ())
+        if life:
+            life.draw_overlay(screen)  # kouř je nad vším ostatním na mapě
         if game.state in ("playing", "won", "lost"):
             game.tower_manager.draw(screen, game)
         ui.draw(screen, game)

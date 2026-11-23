@@ -102,6 +102,35 @@ Tvary všech postav jsou v `docs/design-prototyp/Sprite.dc.html` (seznam mnohoú
 | Nádraží (zeď / střecha) | `#E9C46A` / `#A0463A` |
 | Zpoždění: OK / pozor / kritické | `#3FB05A` / `#FFB020` / `#E0342F` |
 
-## Okolní život (až nakonec, když zbude čas)
+## Okolní život (dělá Matěj, soubor `src/ambient.py`)
 
-Projíždějící vlaky na hlavní trati dole, auta na silnici, traktor na oranici, dvě pasoucí se krávy u stodoly, kouř z komínů.
+Jen dekorace – nic z toho neovlivňuje hru. Běží pořád: na načítací obrazovce, v menu, ve hře i při pauze. Přesně takhle to fungovalo v prototypu (`docs/design-prototyp/Hra.dc.html`, funkce `ambientStep` a část „okolí“ v `renderVals`). Všechny souřadnice jsou v políčkách, kreslí se přes `iso.to_screen` a kvádry stejně jako v `scenery.py` (vršek / přední bok / levý bok, 3 odstíny).
+
+### Projíždějící vlak na hlavní trati dole
+- Kolej y = 14,6 (`world.MAIN_Y`), je už nakreslená ve `scenery.py`.
+- Souprava ČD: **lokomotiva + 3 vagony**, každý vůz dlouhý 2,2 políčka, mezera 0,12, hloubka vozu 0,56 (y 14,32–14,88).
+  - Lokomotiva: podvozek tmavý `#2A2E35` (výška 0,02–0,18), skříň modrá (vršek `#2A6CB5`, bok `#00549F`, levý bok `#004585`, výška 0,18–1,0), bílý pruh na boku ve výšce 0,36–0,43, řada oken `#BFE4FF` ve výšce 0,6–0,82 (každých 0,35), čelo s oknem a žlutým pruhem `#FFC72C` dole, šedý sběrač na střeše.
+  - Vagon: podvozek tmavý, skříň (vršek `#D2D5DC`, bok `#00549F`), horní bílý pás `#F2F4F7` ve výšce 0,55–0,92 s okny `#6FA6CC` (každých 0,34).
+- **První vlak 4 s** po spuštění, další vždy po **22–38 s** (náhodně). Směr náhodně doprava/doleva, rychlost **4,5 políčka/s**.
+  - Doprava: čelo začíná na x = 3, lokomotiva je vpředu (vpravo), vlak zmizí, když čelo přejede x = 29.
+  - Doleva: čelo (levý konec) začíná na x = 20, vlak zmizí, když čelo přejede x = −2.
+- Každý vůz se do pořadí kreslení zařadí zvlášť podle své hloubky (střed vozu).
+
+### Auta na silnici dole
+- Silnice y = 13,5. Dva pruhy: **y = 13,3 jede doprava**, **y = 13,7 jede doleva**.
+- Nové auto každých **9–17 s**, rychlost **2,4 políčka/s**, barva náhodně z `#D6332F`, `#F2F4F7`, `#2E7DD1`, `#FFB020`.
+- Doprava začíná na x = 1, doleva na x = 23; zmizí mimo x 0–24.
+- Tvar (délka 0,8): dvě tmavá kola `#22262C` (kvádry 0,12 × 0,3, výška 0,12), karoserie 0,8 × 0,34 ve výšce 0,08–0,28, kabina 0,42 × 0,28 ve výšce 0,28–0,45, okno `#BFE4FF` na přední straně kabiny.
+
+### Traktor na oranici
+- y = 3,25, jezdí tam a zpět mezi x = 12,8 a 17,4 rychlostí **0,4 políčka/s**, při otočce se otočí i model (kabina je vzadu).
+- Zelený `#3E9E3A`: kapota 0,5 × 0,32 (výška 0,12–0,32), kabina 0,38 × 0,4 (výška 0,12–0,57) s oknem, velká zadní kola a malá přední (`#22262C`), výfuk na kapotě; z výfuku stoupají 2 obláčky kouře (rychleji než z komínů).
+
+### Pasoucí se krávy u stodoly
+- 2 krávy (postavička `"cow"` ze `sprites.py`, velikost 34): kolem bodu (5,0; 1,85) a (6,2; 2,2), chodí tam a zpět po ose x o ±0,7 a ±0,6 políčka (sinus, pomalu), otáčejí se podle směru, animace chůze pomalá.
+- Stojí na pastvině (`world.RECTS`), tam se nestaví věže.
+
+### Kouř z komínů
+- Z komínu každého domku (`world.HOUSES`: střed komínu x0 + 0,79·šířka, y0 + 0,29·hloubka) a z komínu nádraží Kolín, ve výšce z = 1,62.
+- Z každého komínu 3 obláčky posunuté v čase: obláček stoupá o 1 políčko, posouvá se o 0,35 doprava, zvětšuje se z 5 na 14 logických pixelů a mizí (průhlednost 0,6 → 0). Cyklus asi 3,3 s.
+- Obláček = světle šedý kosočtverec `#E9ECEF`. Kouř se kreslí **nad vším** (draw_overlay).
