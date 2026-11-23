@@ -17,9 +17,22 @@ def make_game(waves):
     return game
 
 
-def test_new_game_starts_with_budget_and_no_delay():
+def test_game_starts_with_loading_then_menu():
     game = Game()
+    assert game.state == "loading"
+    run(game, settings.LOAD_TIME + 0.1)
+    assert game.load_progress == 1.0
     assert game.state == "menu"
+
+
+def test_loading_can_be_skipped():
+    game = Game()
+    game.skip_loading()
+    assert game.state == "menu"
+
+
+def test_new_game_starts_with_budget_and_no_delay():
+    game = Game(state="menu")
     game.start()
     assert game.state == "playing"
     assert game.money == settings.START_MONEY
@@ -63,6 +76,49 @@ def test_clearing_all_waves_wins_the_game():
     game.update(1 / 60)
     assert game.state == "won"
     assert game.kills == 4
+
+
+def test_kill_and_arrival_make_popups_that_disappear():
+    game = make_game([[("cow", 2, 0.1)]])
+    game.start_next_wave()
+    run(game, 0.2)
+    game.enemies[0].take_damage(999)
+    game.update(1 / 60)
+    coin = game.popups[-1]
+    assert coin["coin"] and coin["text"] == "+10" and coin["x"] is not None
+    while game.delay == 0:  # počkáme, až druhá kráva dojede do Prahy
+        game.update(1 / 60)
+    assert any(p["text"] == "+5 min" and not p["coin"] for p in game.popups)
+    run(game, settings.POPUP_LIFE + 0.1)
+    assert game.popups == []
+
+
+def test_pause_stops_the_game():
+    game = make_game([[("cow", 1, 1.0)]])
+    game.start_next_wave()
+    run(game, 1)
+    game.toggle_pause()
+    progress = game.enemies[0].progress
+    run(game, 2)
+    assert game.enemies[0].progress == progress
+
+
+def test_double_speed_moves_twice_as_far():
+    normal = make_game([[("cow", 1, 1.0)]])
+    fast = make_game([[("cow", 1, 1.0)]])
+    fast.toggle_speed()
+    for game in (normal, fast):
+        game.start_next_wave()
+        run(game, 2)
+    assert abs(fast.enemies[0].progress - 2 * normal.enemies[0].progress) < 0.05
+
+
+def test_back_to_menu_resets_the_game():
+    game = make_game([[("cow", 1, 1.0)]])
+    game.start_next_wave()
+    run(game, 1)
+    game.go_to_menu()
+    assert game.state == "menu" and game.enemies == [] and game.money == settings.START_MONEY
 
 
 def test_cannot_start_next_wave_while_enemies_on_track():
