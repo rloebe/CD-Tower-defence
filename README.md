@@ -7,7 +7,7 @@ School project: a tower defence game themed around České dráhy (Czech Railway
 ## Team
 
 - Robin Loebe (`rloebe`)
-- Partner: _add name and GitHub username_
+- Matěj Volf (`VolfM`)
 
 ## Running the game (will be filled in)
 

@@ -16,7 +16,7 @@ At the start of a session, confirm which student you are working for. Use their 
 | Student | Name | GitHub | Commit email |
 |---|---|---|---|
 | Robin | Robin Loebe | rloebe | 194109139+rloebe@users.noreply.github.com |
-| Partner | _partner fills in_ | _username_ | _their GitHub noreply email_ |
+| Partner | Matěj Volf | VolfM | 194108824+VolfM@users.noreply.github.com |
 
 Never commit under the other student's identity.
 
