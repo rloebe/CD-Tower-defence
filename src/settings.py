@@ -7,7 +7,7 @@ WIDTH = 960
 HEIGHT = 640
 HUD_HEIGHT = 56  # horní lišta (rozpočet, zpoždění, vlna)
 FPS = 60
-TITLE = "Výluka – ČD Tower Defence"
+TITLE = "Delay – ČD Tower Defence"
 
 # Skutečná obrazovka (nastaví main.py při spuštění; výchozí = okno 960 × 640)
 SCREEN_W = WIDTH

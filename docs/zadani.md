@@ -2,7 +2,7 @@
 
 **Vylosovaná kombinace:** téma **České dráhy**, žánr **Tower defence**
 **Odevzdání:** 24. 11. 2026
-**Název hry (pracovní):** Výluka
+**Název hry:** Delay
 
 Podle vylosované kombinace vytvořte hru splňující níže uvedená kritéria.
 

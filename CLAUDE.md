@@ -2,7 +2,7 @@
 
 School project: a tower defence game themed around České dráhy (Czech Railways), built by two students as a pair. Each student works with their own Claude. This file is shared, so both Claudes follow the same rules.
 
-**Game name: Výluka** (working title, not final yet). **Deadline: 24 Nov 2026.** Finishing beats adding features.
+**Game name: Delay** (final, agreed by both). **Deadline: 24 Nov 2026.** Finishing beats adding features.
 
 ## The assignment
 
