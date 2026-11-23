@@ -16,6 +16,8 @@ class Game:
         self.path = track.PATH
         self.state = state  # "loading" | "menu" | "playing" | "won" | "lost"
         self.load_progress = 0.0  # 0–1 během načítání
+        # kterou věž má hráč vybranou v panelu dole (nastavuje ui.py, čte towers.py)
+        self.selected_tower = settings.TOWER_ORDER[0]
         self.reset()
 
     def reset(self):

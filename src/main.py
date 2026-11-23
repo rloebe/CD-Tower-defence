@@ -1,26 +1,75 @@
-"""Spuštění hry: okno, hlavní smyčka (události -> logika -> kreslení)."""
+"""Spuštění hry: okno, hlavní smyčka (události -> logika -> kreslení).
+
+Hra běží přes celou obrazovku v jejím skutečném rozlišení. Pro ladění jde
+spustit v okně 960 × 640:  python src/main.py --okno
+"""
+
+import sys
 
 import pygame
 
-import scenery
 import settings
-import towers
 import ui
-from game import Game
+
+
+def make_windows_sharp():
+    """Řekne Windows, že si hra kreslí ostře sama.
+
+    Bez toho Windows při zvětšení zobrazení (např. 125 % nebo 150 % na
+    noteboocích) okno hry samy roztáhnou a obraz je rozmazaný a "pixelatý".
+    Na jiných systémech se nic nestane.
+    """
+    if sys.platform != "win32":
+        return
+    import ctypes
+
+    try:
+        ctypes.windll.shcore.SetProcessDpiAwareness(2)  # Windows 8.1 a novější
+    except Exception:
+        try:
+            ctypes.windll.user32.SetProcessDPIAware()  # starší Windows
+        except Exception:
+            pass
+
+
+def open_screen(windowed):
+    """Otevře okno (přes celou obrazovku nebo 960 × 640) a nastaví zvětšení.
+
+    Celá hra je navržená pro logickou plochu 960 × 640. Tady spočítáme, kolikrát
+    ji zvětšit (SCALE), aby se vešla na monitor, a o kolik ji posunout (OFFSET),
+    aby byla uprostřed. Mapa se kreslí i do okrajů, takže nevzniknou černé pruhy.
+    """
+    if windowed:
+        screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
+    else:
+        screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)  # (0, 0) = rozlišení monitoru
+    width, height = screen.get_size()
+    settings.SCREEN_W, settings.SCREEN_H = width, height
+    settings.SCALE = min(width / settings.WIDTH, height / settings.HEIGHT)
+    settings.OFFSET_X = round((width - settings.WIDTH * settings.SCALE) / 2)
+    settings.OFFSET_Y = round((height - settings.HEIGHT * settings.SCALE) / 2)
+    return screen
 
 
 def main():
+    make_windows_sharp()
     pygame.init()
-    screen = pygame.display.set_mode((settings.WIDTH, settings.HEIGHT))
+    screen = open_screen(windowed="--okno" in sys.argv)
     pygame.display.set_caption(settings.TITLE)
     clock = pygame.time.Clock()
+
+    # Moduly s kreslením mapy a věží se načtou až teď, když už známe velikost obrazovky.
+    import scenery
+    import towers
+    from game import Game
 
     scene = scenery.Scenery()  # mapa se vykreslí jen jednou, tady
     game = Game(towers.TowerManager())
     running = True
 
     while running:
-        # čas od minulého snímku v sekundách; omezený, aby se po zaseknutí nic "nepřeskočilo"
+        # čas od minulého snímku v sekundách; omezený, aby se po zaseknutí
+        # (např. přetažení okna) nepřátelé najednou "neteleportovali" o kus dál
         dt = min(clock.tick(settings.FPS) / 1000, 0.05)
 
         # 1) události (klávesy, myš, zavření okna)
@@ -45,6 +94,7 @@ def main():
             elif action == "skip_loading":
                 game.skip_loading()
             elif action is None and game.state == "playing":
+                # klik, který nebyl na tlačítko rozhraní, patří věžím (stavění)
                 game.tower_manager.handle_event(event, game)
 
         # 2) logika
@@ -52,16 +102,11 @@ def main():
         scene.update(dt)
 
         # 3) kreslení: mapa je vidět vždy (i za načítáním a menu)
+        screen.fill((0, 0, 0))
         scene.draw(screen, game)
         if game.state in ("playing", "won", "lost"):
             game.tower_manager.draw(screen, game)
-            ui.draw_hud(screen, game)
-        if game.state == "loading":
-            ui.draw_loading(screen, game)
-        elif game.state == "menu":
-            ui.draw_menu(screen, game)
-        elif game.state in ("won", "lost"):
-            ui.draw_end_screen(screen, game)
+        ui.draw(screen, game)
 
         pygame.display.flip()
 

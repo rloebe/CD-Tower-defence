@@ -14,15 +14,19 @@ Podrobnosti najdeš v [design dokumentu](docs/design-dokument.md).
 
 ## Ovládání
 
-| Klávesa / myš | Akce |
+Hra se ovládá hlavně myší (tlačítka na obrazovce), klávesy jsou zkratky.
+
+| Myš / klávesa | Akce |
 |---|---|
-| **libovolná klávesa / klik** | přeskočit načítání |
-| **Enter** | začít hru (v menu) |
-| **Levé tlačítko myši** | postavit věž na volnou trávu vedle trati |
-| **Mezerník** | spustit další vlnu |
-| **P** | pauza |
-| **F** | zrychlení 2× |
-| **R** / **M** | na konci hry: hrát znovu / hlavní menu |
+| **klik / libovolná klávesa** | přeskočit načítání |
+| tlačítko **Hrát** / **Enter** | začít hru |
+| karta věže vlevo dole / **1**, **2**, **3** | vybrat věž |
+| **levé tlačítko myši** na trávě | postavit vybranou věž (průhledná věž ukazuje kam, kruh její dosah) |
+| přepínač **Místa ke stavbě** | zvýraznit všechna volná místa |
+| tlačítko **Další vlna** / **mezerník** | spustit další vlnu |
+| tlačítko **Pauza** / **P** | pauza |
+| tlačítko **2×** / **F** | zrychlení |
+| **Hrát znovu** / **R**, **Hlavní menu** / **M** | na konci hry |
 | **Esc** | ukončit hru |
 
 ## Postup spuštění
@@ -45,6 +49,9 @@ Potřebuješ **Python 3.12 nebo novější** a **Git**.
    ```
    python src/main.py
    ```
+   Hra se spustí přes celou obrazovku. Pro spuštění v okně: `python src/main.py --okno`.
+
+**Windows – když `python` hlásí „Python nebyl nalezen“:** Python není v PATH. Použij místo `python` příkaz `py` (např. `py -m pip install -r requirements.txt` a `py src/main.py`). Ověříš ho přes `py --version`.
 
 Na macOS/Linuxu použij místo `python` příkaz `python3`.
 
@@ -78,10 +85,10 @@ Ruční testovací scénář je v [docs/testovaci-scenar.md](docs/testovaci-scen
 | `src/enemies.py` | nepřátelé |
 | `src/waves.py` | vlny nepřátel |
 | `src/towers.py` | věže |
-| `src/ui.py` | menu, horní lišta, konec hry |
+| `src/ui.py` | obrazovky: načítání, menu, horní lišta, výběr věží, konec hry |
 | `src/settings.py` | konstanty (velikost okna, barvy, pravidla) |
 | `tests/` | automatické testy |
-| `docs/` | design dokument, testovací scénář |
+| `docs/` | zadání, design dokument, vizuální design, testovací scénář |
 | `CORRECTIONS-<jméno>.md` | deník selhání AI každého z nás |
 | `RETROSPEKTIVA-<jméno>.md` | retrospektiva každého z nás |
 
